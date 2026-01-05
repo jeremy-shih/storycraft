@@ -219,7 +219,7 @@ export function LoadingMessages({
     useEffect(() => {
         if (!isLoading) return;
 
-        const interval = setInterval(advanceMessage, 3000); // 3 seconds per message
+        const interval = setInterval(advanceMessage, 7000); // 7 seconds per message
         return () => clearInterval(interval);
     }, [isLoading, advanceMessage]);
 

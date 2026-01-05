@@ -205,7 +205,7 @@ export const SceneCard = memo(function SceneCard({
             {/* Content Area */}
             <div className="p-5">
                 <div className="mb-3 flex items-center justify-between">
-                    <span className="rounded-full bg-secondary/30 px-3 py-1 text-lg font-bold text-foreground text-secondary-foreground">
+                    <span className="rounded-full bg-secondary/30 px-3 py-1 text-sm font-bold text-foreground text-secondary-foreground">
                         Scene {sceneNumber}
                     </span>
                     <Button
