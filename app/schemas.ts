@@ -334,6 +334,10 @@ export const regeneratePropImageSchema = z.object({
     imageModel: z.string().optional(),
 });
 
+export const analyzeStyleImageSchema = z.object({
+    gcsUri: z.string().startsWith("gs://"),
+});
+
 // Inferred Types
 export type GenerateScenarioInput = z.infer<typeof generateScenarioSchema>;
 export type GenerateStoryboardInput = z.infer<typeof generateStoryboardSchema>;
@@ -347,3 +351,4 @@ export type UploadImageToGCSInput = z.infer<typeof uploadImageToGCSSchema>;
 export type GetDynamicImageUrlInput = z.infer<typeof getDynamicImageUrlSchema>;
 export type SaveImageToPublicInput = z.infer<typeof saveImageToPublicSchema>;
 export type UploadStyleImageInput = z.infer<typeof uploadStyleImageToGCSSchema>;
+export type AnalyzeStyleImageInput = z.infer<typeof analyzeStyleImageSchema>;

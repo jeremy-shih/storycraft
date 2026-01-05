@@ -32,13 +32,19 @@ export async function uploadImage(
     try {
         // Decode the base64 string into a buffer
         // Remove the data URI prefix if it exists (e.g., "data:image/jpeg;base64,")
-        const matches = base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
         let base64Data = base64;
         let contentType = "image/png";
 
-        if (matches && matches.length === 3) {
-            contentType = matches[1];
-            base64Data = matches[2];
+        if (base64.startsWith("data:")) {
+            const commaIndex = base64.indexOf(",");
+            if (commaIndex !== -1) {
+                const header = base64.substring(0, commaIndex);
+                const match = header.match(/^data:([A-Za-z-+\/]+);base64$/);
+                if (match) {
+                    contentType = match[1];
+                }
+                base64Data = base64.substring(commaIndex + 1);
+            }
         } else if (base64.includes(",")) {
             base64Data = base64.split(",")[1];
         }

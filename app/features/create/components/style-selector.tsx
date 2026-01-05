@@ -17,6 +17,7 @@ import {
     uploadStyleImageToGCS,
     getSignedUrlAction,
 } from "@/app/features/shared/actions/storageActions";
+import { analyzeStyleImageAction } from "@/app/features/create/actions/analyze-style";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -43,6 +44,7 @@ export function StyleSelector({
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [customStyleText, setCustomStyleText] = useState("");
     const [isUploading, setIsUploading] = useState(false);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -78,6 +80,25 @@ export function StyleSelector({
                 const gcsUri = await uploadStyleImageToGCS(base64, file.name);
                 if (gcsUri) {
                     onStyleImageUpload(gcsUri);
+
+                    // Start analysis
+                    setIsAnalyzing(true);
+                    try {
+                        const result = await analyzeStyleImageAction(gcsUri);
+                        if (result.success && result.description) {
+                            setCustomStyleText(result.description);
+                            toast.success("Style analysis complete");
+                        } else {
+                            toast.error(
+                                result.error || "Failed to analyze style",
+                            );
+                        }
+                    } catch (err) {
+                        toast.error("Failed to analyze style");
+                        console.error("Analysis error:", err);
+                    } finally {
+                        setIsAnalyzing(false);
+                    }
                 }
             };
             reader.readAsDataURL(file);
@@ -175,15 +196,27 @@ export function StyleSelector({
                             <Label htmlFor="style-description">
                                 describe the style in detail
                             </Label>
-                            <Textarea
-                                id="style-description"
-                                placeholder="Cinematic, 35mm film, grainy, high contrast, warm sepia tones..."
-                                value={customStyleText}
-                                onChange={(e) =>
-                                    setCustomStyleText(e.target.value)
-                                }
-                                className="min-h-[100px] resize-none"
-                            />
+                            <div className="relative">
+                                <Textarea
+                                    id="style-description"
+                                    placeholder={
+                                        isAnalyzing
+                                            ? "Analyzing visual style..."
+                                            : "Cinematic, 35mm film, grainy, high contrast, warm sepia tones..."
+                                    }
+                                    value={customStyleText}
+                                    onChange={(e) =>
+                                        setCustomStyleText(e.target.value)
+                                    }
+                                    disabled={isAnalyzing}
+                                    className="min-h-[100px] resize-none"
+                                />
+                                {isAnalyzing && (
+                                    <div className="absolute bottom-2 right-2">
+                                        <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="space-y-4">

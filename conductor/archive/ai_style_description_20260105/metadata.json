@@ -1,0 +1,8 @@
+{
+    "track_id": "ai_style_description_20260105",
+    "type": "feature",
+    "status": "new",
+    "created_at": "2026-01-05T10:00:00Z",
+    "updated_at": "2026-01-05T10:00:00Z",
+    "description": "When uploading a style reference image in @app/features/create/components/style-selector.tsx send the image to gemini to describe the visual style to fill the Custom style description"
+}
