@@ -51,9 +51,6 @@ export async function resizeImage(
             resizedImageBuffer.toString("base64"),
             `upload-${uuid}.png`,
         );
-        if (!imageGcsUri) {
-            throw new Error("Failed to upload image to GCS");
-        }
         logger.debug("Image resized!");
         return imageGcsUri;
     } catch (error) {
@@ -235,10 +232,6 @@ export async function createCollage(
     const filename = `collage-${Date.now()}.png`;
     const base64Collage = collageBuffer.toString("base64");
     const gcsUri = await uploadImage(base64Collage, filename);
-
-    if (!gcsUri) {
-        throw new Error("Failed to upload collage to storage");
-    }
 
     return gcsUri;
 }

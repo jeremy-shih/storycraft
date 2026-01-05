@@ -27,3 +27,20 @@ Object.defineProperty(window, "matchMedia", {
         dispatchEvent: vi.fn(),
     })),
 });
+
+// Mock next-auth
+vi.mock("next-auth", () => {
+    const mockAuth = vi.fn();
+    const mockHandlers = { GET: vi.fn(), POST: vi.fn() };
+    const mockSignIn = vi.fn();
+    const mockSignOut = vi.fn();
+
+    return {
+        default: vi.fn().mockReturnValue({
+            handlers: mockHandlers,
+            auth: mockAuth,
+            signIn: mockSignIn,
+            signOut: mockSignOut,
+        }),
+    };
+});

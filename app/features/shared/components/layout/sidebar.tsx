@@ -35,7 +35,7 @@ export const Sidebar = memo(function Sidebar() {
     const { settings, updateSettings } = useSettings();
     const { scenarios, isLoading, loadScenario, setCurrentScenarioId } =
         useScenario();
-    const { scenario: currentScenario } = useScenarioStore();
+    const currentScenario = useScenarioStore((state) => state.scenario);
     const { activeTab, setActiveTab } = useEditorStore();
     const {
         handleSelectScenario,

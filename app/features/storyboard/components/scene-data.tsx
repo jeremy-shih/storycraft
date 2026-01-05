@@ -119,6 +119,7 @@ export function SceneData({
                                     className="bg-black/50 hover:bg-blue-500 hover:text-white"
                                     onClick={onGenerateVideo}
                                     disabled={isGenerating}
+                                    aria-label="Generate video for scene"
                                 >
                                     <Video className="h-4 w-4" />
                                     <span className="sr-only">
@@ -133,6 +134,7 @@ export function SceneData({
                                     className="bg-black/50 hover:bg-red-500 hover:text-white"
                                     onClick={onRegenerateImage}
                                     disabled={isGenerating}
+                                    aria-label="Regenerate image"
                                 >
                                     <RefreshCw className="h-4 w-4" />
                                     <span className="sr-only">
@@ -145,6 +147,7 @@ export function SceneData({
                                     className="bg-black/50 hover:bg-green-500 hover:text-white"
                                     onClick={handleUploadClick}
                                     disabled={isGenerating}
+                                    aria-label="Upload image"
                                 >
                                     <Upload className="h-4 w-4" />
                                     <span className="sr-only">
@@ -159,6 +162,7 @@ export function SceneData({
                                         setIsConversationalEditOpen(true)
                                     }
                                     disabled={isGenerating}
+                                    aria-label="Conversational edit"
                                 >
                                     <MessageCircle className="h-4 w-4" />
                                     <span className="sr-only">
@@ -181,6 +185,7 @@ export function SceneData({
                                         className="bg-black/50 hover:bg-red-500 hover:text-white"
                                         onClick={onRemoveScene}
                                         disabled={isGenerating}
+                                        aria-label="Delete scene"
                                     >
                                         <Trash2 className="h-4 w-4" />
                                         <span className="sr-only">
@@ -191,10 +196,12 @@ export function SceneData({
                             )}
                             <div className="absolute bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
                                 <div
-                                    className="cursor-grab select-none rounded bg-black/50 p-1.5 transition-colors hover:bg-blue-500 hover:text-white active:cursor-grabbing"
-                                    style={{ touchAction: "none" }}
+                                    className="cursor-grab touch-none select-none rounded bg-black/50 p-1.5 transition-colors hover:bg-blue-500 hover:text-white active:cursor-grabbing"
                                     title="Drag to reorder scene"
                                     onMouseDown={(e) => e.stopPropagation()}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-label="Drag to reorder scene"
                                 >
                                     <GripVertical className="h-3 w-3 text-white" />
                                 </div>

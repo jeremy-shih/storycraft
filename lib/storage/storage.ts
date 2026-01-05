@@ -23,10 +23,10 @@ const storageUri = env.GCS_VIDEOS_STORAGE_URI;
 export async function uploadImage(
     base64: string,
     filename: string,
-): Promise<string | null> {
+): Promise<string> {
     if (!base64) {
         logger.warn("Attempted to upload an empty base64 string.");
-        return null;
+        throw new Error("Attempted to upload an empty base64 string.");
     }
 
     try {
@@ -55,7 +55,9 @@ export async function uploadImage(
             logger.error(
                 `Could not extract bucket name from STORAGE_URI: ${storageUri}`,
             );
-            return null;
+            throw new Error(
+                `Could not extract bucket name from STORAGE_URI: ${storageUri}`,
+            );
         }
 
         // Get a reference to the bucket
@@ -79,7 +81,7 @@ export async function uploadImage(
         return gcsUri;
     } catch (error) {
         logger.error(`Failed to upload image ${filename} to GCS:`, error);
-        return null;
+        throw new Error(`Failed to upload image ${filename} to GCS: ${error}`);
     }
 }
 

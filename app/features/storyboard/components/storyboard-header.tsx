@@ -59,6 +59,7 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                                 viewMode === "grid" &&
                                     "bg-accent text-accent-foreground",
                             )}
+                            aria-label="Grid view"
                         >
                             <Grid className="h-4 w-4" />
                             <span className="sr-only">Grid view</span>
@@ -72,6 +73,7 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                                 viewMode === "list" &&
                                     "bg-accent text-accent-foreground",
                             )}
+                            aria-label="List view"
                         >
                             <List className="h-4 w-4" />
                             <span className="sr-only">List view</span>
@@ -85,6 +87,7 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                                 viewMode === "slideshow" &&
                                     "bg-accent text-accent-foreground",
                             )}
+                            aria-label="Slideshow view"
                         >
                             <Presentation className="h-4 w-4" />
                             <span className="sr-only">Slideshow view</span>

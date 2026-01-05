@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useScenarioStore } from "@/app/features/scenario/stores/useScenarioStore";
 import { useLoadingStore } from "@/app/features/shared/stores/useLoadingStore";
 import { useStoryboardActions } from "@/app/features/storyboard/hooks/use-storyboard-actions";
@@ -9,9 +10,18 @@ export type ViewMode = "grid" | "list" | "slideshow";
 export type DisplayMode = "image" | "video";
 
 export function useStoryboardTabState() {
-    const { scenario, errorMessage } = useScenarioStore();
-    const { video: isVideoLoading, scenes: generatingScenes } =
-        useLoadingStore();
+    const { scenario, errorMessage } = useScenarioStore(
+        useShallow((state) => ({
+            scenario: state.scenario,
+            errorMessage: state.errorMessage,
+        })),
+    );
+    const { video: isVideoLoading, scenes: generatingScenes } = useLoadingStore(
+        useShallow((state) => ({
+            video: state.video,
+            scenes: state.scenes,
+        })),
+    );
 
     const {
         handleRegenerateImage,

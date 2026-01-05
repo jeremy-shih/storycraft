@@ -5,6 +5,7 @@ import { Language } from "@/app/types";
 import logger from "@/app/logger";
 import { generateVoiceoverSchema } from "@/app/schemas";
 import { requireAuth } from "@/lib/api/auth-utils";
+import { validateActionInput } from "@/lib/utils/validation";
 
 export async function generateVoiceover(
     scenes: Array<{
@@ -14,18 +15,15 @@ export async function generateVoiceover(
     voiceName?: string,
 ): Promise<string[]> {
     await requireAuth();
-    const parseResult = generateVoiceoverSchema.safeParse({
-        scenes,
-        language,
-        voiceName,
-    });
-    if (!parseResult.success) {
-        logger.error(
-            "Validation error in generateVoiceover:",
-            parseResult.error,
-        );
-        throw new Error(`Invalid input: ${parseResult.error.message}`);
-    }
+    validateActionInput(
+        {
+            scenes,
+            language,
+            voiceName,
+        },
+        generateVoiceoverSchema,
+        "Validation error in generateVoiceover",
+    );
 
     logger.debug(`Generating voiceover with voice: ${voiceName || "default"}`);
     try {

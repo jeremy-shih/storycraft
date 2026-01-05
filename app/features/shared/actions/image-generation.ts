@@ -40,7 +40,7 @@ export async function generateImageForScenario({
     imageGcsUri,
     aspectRatio,
     modelName = DEFAULT_SETTINGS.imageModel,
-}: GenerateImageOptions) {
+}: GenerateImageOptions): Promise<{ imageGcsUri: string }> {
     await requireAuth();
     try {
         let targetAspectRatio = aspectRatio || scenario.aspectRatio || "16:9";
@@ -177,13 +177,13 @@ export async function generateImageForScenario({
             modelName,
         );
 
-        return result;
+        if (!result.success) {
+            throw new Error(result.errorMessage || "Failed to generate image");
+        }
+
+        return { imageGcsUri: result.imageGcsUri! };
     } catch (error) {
         logger.error("Error in generateImageForScenario:", error);
-        return {
-            success: false,
-            errorMessage:
-                error instanceof Error ? error.message : "Unknown error",
-        };
+        throw error;
     }
 }

@@ -152,10 +152,10 @@ export const generateStoryboardSchema = z.object({
 });
 
 export const conversationalEditSchema = z.object({
-    imageGcsUri: z.string(),
-    instruction: z.string(),
+    imageGcsUri: z.string().startsWith("gs://"),
+    instruction: z.string().min(1),
     sceneNumber: z.number(),
-    scenarioId: z.string(),
+    scenarioId: z.string().min(1),
 });
 
 export const generateMusicSchema = z.object({
@@ -189,7 +189,7 @@ export const uploadImageToGCSSchema = z.object({
 });
 
 export const getDynamicImageUrlSchema = z.object({
-    gcsUri: z.string(),
+    gcsUri: z.string().startsWith("gs://"),
     download: z.boolean().optional(),
 });
 
@@ -246,16 +246,16 @@ export const timelineApiPostSchema = z.object({
 
 // Modify Scenario Schemas
 export const deleteCharacterSchema = z.object({
-    currentScenario: z.string(),
-    oldName: z.string(),
-    oldDescription: z.string(),
+    currentScenario: z.string().min(1),
+    oldName: z.string().min(1),
+    oldDescription: z.string().min(1),
 });
 
 export const regenerateCharacterTextSchema = z.object({
-    currentScenario: z.string(),
-    oldCharacterName: z.string(),
-    newCharacterName: z.string(),
-    newCharacterDescription: z.string(),
+    currentScenario: z.string().min(1),
+    oldCharacterName: z.string().min(1),
+    newCharacterName: z.string().min(1),
+    newCharacterDescription: z.string().min(1),
     style: z.string(),
     llmModel: z.string().optional(),
     thinkingBudget: z.number().optional(),
@@ -263,11 +263,11 @@ export const regenerateCharacterTextSchema = z.object({
 });
 
 export const regenerateCharacterImageSchema = z.object({
-    currentScenario: z.string(),
-    characterName: z.string(),
-    currentCharacterDescription: z.string(),
-    currentCharacterVoice: z.string(),
-    imageGcsUri: z.string(),
+    currentScenario: z.string().min(1),
+    characterName: z.string().min(1),
+    currentCharacterDescription: z.string().min(1),
+    currentCharacterVoice: z.string().optional(),
+    imageGcsUri: z.string().startsWith("gs://"),
     allCharacters: z.array(characterSchema),
     style: z.string(),
     llmModel: z.string().optional(),
@@ -276,16 +276,16 @@ export const regenerateCharacterImageSchema = z.object({
 });
 
 export const deleteSettingSchema = z.object({
-    currentScenario: z.string(),
-    oldName: z.string(),
-    oldDescription: z.string(),
+    currentScenario: z.string().min(1),
+    oldName: z.string().min(1),
+    oldDescription: z.string().min(1),
 });
 
 export const regenerateSettingTextSchema = z.object({
-    currentScenario: z.string(),
-    oldSettingName: z.string(),
-    newSettingName: z.string(),
-    newSettingDescription: z.string(),
+    currentScenario: z.string().min(1),
+    oldSettingName: z.string().min(1),
+    newSettingName: z.string().min(1),
+    newSettingDescription: z.string().min(1),
     style: z.string(),
     aspectRatio: z.string().optional(),
     llmModel: z.string().optional(),
@@ -294,10 +294,10 @@ export const regenerateSettingTextSchema = z.object({
 });
 
 export const regenerateSettingImageSchema = z.object({
-    currentScenario: z.string(),
-    settingName: z.string(),
-    currentSettingDescription: z.string(),
-    imageGcsUri: z.string(),
+    currentScenario: z.string().min(1),
+    settingName: z.string().min(1),
+    currentSettingDescription: z.string().min(1),
+    imageGcsUri: z.string().startsWith("gs://"),
     allSettings: z.array(settingSchema),
     style: z.string(),
     llmModel: z.string().optional(),
@@ -306,9 +306,9 @@ export const regenerateSettingImageSchema = z.object({
 });
 
 export const deletePropSchema = z.object({
-    currentScenario: z.string(),
-    oldName: z.string(),
-    oldDescription: z.string(),
+    currentScenario: z.string().min(1),
+    oldName: z.string().min(1),
+    oldDescription: z.string().min(1),
 });
 
 export const regeneratePropTextSchema = z.object({

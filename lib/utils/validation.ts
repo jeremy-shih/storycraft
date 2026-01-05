@@ -35,3 +35,29 @@ export function validateInput<T>(
         data: result.data,
     } as const;
 }
+
+/**
+ * Validates data against a Zod schema for Server Actions.
+ * Throws an error if validation fails.
+ *
+ * @param data The data to validate
+ * @param schema The Zod schema to validate against
+ * @param errorMessage Optional custom error message
+ * @returns The parsed data
+ */
+export function validateActionInput<T>(
+    data: unknown,
+    schema: z.Schema<T>,
+    errorMessage: string = "Validation failed",
+): T {
+    const result = schema.safeParse(data);
+
+    if (!result.success) {
+        logger.error(
+            `${errorMessage}: ${JSON.stringify(result.error.format())}`,
+        );
+        throw new Error(`${errorMessage}: ${result.error.message}`);
+    }
+
+    return result.data;
+}

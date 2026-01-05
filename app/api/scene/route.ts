@@ -17,6 +17,7 @@ export const POST = withAuth(async (req) => {
         const scene = validation.data;
 
         // Simulate processing (e.g., fetching data, saving to DB, etc.)
+        // TODO: Implement proper processing and ownership check. This is currently a placeholder.
         logger.debug(`start temp for ${scene.voiceover}`);
         await new Promise((resolve) => setTimeout(resolve, 10000));
         logger.debug(`end temp for ${scene.voiceover}`);

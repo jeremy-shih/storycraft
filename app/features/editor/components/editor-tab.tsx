@@ -18,11 +18,19 @@ import { useEditorStore } from "@/app/features/editor/stores/useEditorStore";
 import { TimelineEditor } from "./TimelineEditor";
 import { getAudioDuration, getVideoDuration } from "../utils/editor-utils";
 import { useEditorActions } from "@/app/features/editor/hooks/use-editor-actions";
+import { useShallow } from "zustand/react/shallow";
 
 export const EditorTab = memo(function EditorTab() {
-    const { scenario, logoOverlay } = useScenarioStore();
+    const { scenario, logoOverlay } = useScenarioStore(
+        useShallow((state) => ({
+            scenario: state.scenario,
+            logoOverlay: state.logoOverlay,
+        })),
+    );
     const scenarioId = scenario?.id || null;
-    const { video: isExporting } = useLoadingStore();
+    const { video: isExporting } = useLoadingStore(
+        useShallow((state) => ({ video: state.video })),
+    );
     const {
         currentTime,
         exportProgress,

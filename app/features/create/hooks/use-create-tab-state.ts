@@ -4,6 +4,7 @@ import { useScenarioStore } from "@/app/features/scenario/stores/useScenarioStor
 import { useLoadingStore } from "@/app/features/shared/stores/useLoadingStore";
 import { useCreateActions } from "@/app/features/create/hooks/use-create-actions";
 import { type Language } from "@/app/types";
+import { useShallow } from "zustand/react/shallow";
 
 export function useCreateTabState() {
     const {
@@ -17,9 +18,24 @@ export function useCreateTabState() {
         styleImageUri,
         errorMessage,
         setField,
-    } = useScenarioStore();
+    } = useScenarioStore(
+        useShallow((state) => ({
+            name: state.name,
+            pitch: state.pitch,
+            numScenes: state.numScenes,
+            style: state.style,
+            aspectRatio: state.aspectRatio,
+            durationSeconds: state.durationSeconds,
+            language: state.language,
+            styleImageUri: state.styleImageUri,
+            errorMessage: state.errorMessage,
+            setField: state.setField,
+        })),
+    );
 
-    const { scenario: isLoading } = useLoadingStore();
+    const { scenario: isLoading } = useLoadingStore(
+        useShallow((state) => ({ scenario: state.scenario })),
+    );
     const { handleGenerateScenario } = useCreateActions();
 
     const totalLength = numScenes * durationSeconds;

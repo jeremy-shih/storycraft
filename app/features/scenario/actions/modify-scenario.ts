@@ -19,6 +19,7 @@ import {
 
 import { DEFAULT_SETTINGS } from "@/lib/ai-config";
 import { requireAuth } from "@/lib/api/auth-utils";
+import { validateActionInput } from "@/lib/utils/validation";
 
 // ScenarioUpdateResult interface remains as it's specific to these actions
 export interface ScenarioUpdateResult {
@@ -150,17 +151,15 @@ export async function deleteCharacterFromScenario(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = deleteCharacterSchema.safeParse({
-            currentScenario,
-            oldName,
-            oldDescription,
-        });
-        if (!parseResult.success) {
-            handleError(
-                "delete character from scenario text",
-                parseResult.error,
-            );
-        }
+        validateActionInput(
+            {
+                currentScenario,
+                oldName,
+                oldDescription,
+            },
+            deleteCharacterSchema,
+            "Validation error in deleteCharacterFromScenario",
+        );
         // Update scenario text
         const updatedScenario = await deleteFromScenarioText(
             currentScenario,
@@ -185,14 +184,15 @@ export async function deleteSettingFromScenario(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = deleteSettingSchema.safeParse({
-            currentScenario,
-            oldName,
-            oldDescription,
-        });
-        if (!parseResult.success) {
-            handleError("delete setting from scenario text", parseResult.error);
-        }
+        validateActionInput(
+            {
+                currentScenario,
+                oldName,
+                oldDescription,
+            },
+            deleteSettingSchema,
+            "Validation error in deleteSettingFromScenario",
+        );
         const updatedScenario = await deleteFromScenarioText(
             currentScenario,
             oldName,
@@ -216,14 +216,15 @@ export async function deletePropFromScenario(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = deletePropSchema.safeParse({
-            currentScenario,
-            oldName,
-            oldDescription,
-        });
-        if (!parseResult.success) {
-            handleError("delete prop from scenario text", parseResult.error);
-        }
+        validateActionInput(
+            {
+                currentScenario,
+                oldName,
+                oldDescription,
+            },
+            deletePropSchema,
+            "Validation error in deletePropFromScenario",
+        );
         const updatedScenario = await deleteFromScenarioText(
             currentScenario,
             oldName,
@@ -258,22 +259,20 @@ export async function regenerateCharacterAndScenarioFromText(
     logger.info("regenerateCharacterAndScenarioFromText");
     logger.debug("scenario :" + JSON.stringify(scenario, null, 2));
     try {
-        const parseResult = regenerateCharacterTextSchema.safeParse({
-            currentScenario: scenario.scenario,
-            oldCharacterName,
-            newCharacterName,
-            newCharacterDescription,
-            style,
-            llmModel,
-            thinkingBudget,
-            imageModel,
-        });
-        if (!parseResult.success) {
-            handleError(
-                "regenerate character and scenario from text",
-                parseResult.error,
-            );
-        }
+        validateActionInput(
+            {
+                currentScenario: scenario.scenario,
+                oldCharacterName,
+                newCharacterName,
+                newCharacterDescription,
+                style,
+                llmModel,
+                thinkingBudget,
+                imageModel,
+            },
+            regenerateCharacterTextSchema,
+            "Validation error in regenerateCharacterAndScenarioFromText",
+        );
 
         // Generate new character image
         const imageResult = await generateImageForScenario({
@@ -285,12 +284,6 @@ export async function regenerateCharacterAndScenarioFromText(
             entityType: "character",
             modelName: imageModel,
         });
-
-        if (!imageResult.success) {
-            throw new Error(
-                `Character image generation failed: ${imageResult.errorMessage}`,
-            );
-        }
 
         // Update scenario text
         const updatedScenario = await updateScenarioText(
@@ -331,21 +324,22 @@ export async function regenerateCharacterAndScenarioFromImage(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = regenerateCharacterImageSchema.safeParse({
-            currentScenario: scenario.scenario,
-            characterName,
-            currentCharacterDescription,
-            currentCharacterVoice,
-            imageGcsUri,
-            allCharacters,
-            style,
-            llmModel,
-            thinkingBudget,
-            imageModel,
-        });
-        if (!parseResult.success) {
-            handleError("regenerate character and scenario", parseResult.error);
-        }
+        validateActionInput(
+            {
+                currentScenario: scenario.scenario,
+                characterName,
+                currentCharacterDescription,
+                currentCharacterVoice,
+                imageGcsUri,
+                allCharacters,
+                style,
+                llmModel,
+                thinkingBudget,
+                imageModel,
+            },
+            regenerateCharacterImageSchema,
+            "Validation error in regenerateCharacterAndScenarioFromImage",
+        );
 
         const characterListText = allCharacters
             .map((char) => `- ${char.name}: ${char.description}`)
@@ -443,20 +437,21 @@ export async function regenerateSettingAndScenarioFromText(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = regenerateSettingTextSchema.safeParse({
-            currentScenario: scenario.scenario,
-            oldSettingName,
-            newSettingName,
-            newSettingDescription,
-            style,
-            aspectRatio,
-            llmModel,
-            thinkingBudget,
-            imageModel,
-        });
-        if (!parseResult.success) {
-            handleError("regenerate scenario from setting", parseResult.error);
-        }
+        validateActionInput(
+            {
+                currentScenario: scenario.scenario,
+                oldSettingName,
+                newSettingName,
+                newSettingDescription,
+                style,
+                aspectRatio,
+                llmModel,
+                thinkingBudget,
+                imageModel,
+            },
+            regenerateSettingTextSchema,
+            "Validation error in regenerateSettingAndScenarioFromText",
+        );
 
         // Generate new setting image
         const imageResult = await generateImageForScenario({
@@ -469,12 +464,6 @@ export async function regenerateSettingAndScenarioFromText(
             modelName: imageModel,
             aspectRatio,
         });
-
-        if (!imageResult.success) {
-            throw new Error(
-                `Setting image generation failed: ${imageResult.errorMessage}`,
-            );
-        }
 
         // Update scenario text
         const updatedScenario = await updateScenarioText(
@@ -515,19 +504,20 @@ export async function regeneratePropAndScenarioFromText(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = regeneratePropTextSchema.safeParse({
-            currentScenario: scenario.scenario,
-            oldPropName,
-            newPropName,
-            newPropDescription,
-            style,
-            llmModel,
-            thinkingBudget,
-            imageModel,
-        });
-        if (!parseResult.success) {
-            handleError("regenerate scenario from prop", parseResult.error);
-        }
+        validateActionInput(
+            {
+                currentScenario: scenario.scenario,
+                oldPropName,
+                newPropName,
+                newPropDescription,
+                style,
+                llmModel,
+                thinkingBudget,
+                imageModel,
+            },
+            regeneratePropTextSchema,
+            "Validation error in regeneratePropAndScenarioFromText",
+        );
 
         // Generate new prop image
         const imageResult = await generateImageForScenario({
@@ -536,12 +526,6 @@ export async function regeneratePropAndScenarioFromText(
             entityType: "prop",
             modelName: imageModel,
         });
-
-        if (!imageResult.success) {
-            throw new Error(
-                `Prop image generation failed: ${imageResult.errorMessage}`,
-            );
-        }
 
         // Update scenario text
         const updatedScenario = await updateScenarioText(
@@ -583,20 +567,21 @@ export async function regenerateSettingAndScenarioFromImage(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = regenerateSettingImageSchema.safeParse({
-            currentScenario: scenario.scenario,
-            settingName,
-            currentSettingDescription,
-            imageGcsUri,
-            allSettings,
-            style,
-            llmModel,
-            thinkingBudget,
-            imageModel,
-        });
-        if (!parseResult.success) {
-            handleError("regenerate setting and scenario", parseResult.error);
-        }
+        validateActionInput(
+            {
+                currentScenario: scenario.scenario,
+                settingName,
+                currentSettingDescription,
+                imageGcsUri,
+                allSettings,
+                style,
+                llmModel,
+                thinkingBudget,
+                imageModel,
+            },
+            regenerateSettingImageSchema,
+            "Validation error in regenerateSettingAndScenarioFromImage",
+        );
 
         const settingListText = allSettings
             .map((setting) => `- ${setting.name}: ${setting.description}`)
@@ -691,20 +676,21 @@ export async function regeneratePropAndScenarioFromImage(
 ): Promise<ScenarioUpdateResult> {
     await requireAuth();
     try {
-        const parseResult = regeneratePropImageSchema.safeParse({
-            currentScenario: scenario.scenario,
-            propName,
-            currentPropDescription,
-            imageGcsUri,
-            allProps,
-            style,
-            llmModel,
-            thinkingBudget,
-            imageModel,
-        });
-        if (!parseResult.success) {
-            handleError("regenerate prop and scenario", parseResult.error);
-        }
+        validateActionInput(
+            {
+                currentScenario: scenario.scenario,
+                propName,
+                currentPropDescription,
+                imageGcsUri,
+                allProps,
+                style,
+                llmModel,
+                thinkingBudget,
+                imageModel,
+            },
+            regeneratePropImageSchema,
+            "Validation error in regeneratePropAndScenarioFromImage",
+        );
 
         const propListText = allProps
             .map((prop) => `- ${prop.name}: ${prop.description}`)

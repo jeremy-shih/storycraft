@@ -68,7 +68,6 @@ describe("generateImageForScenario", () => {
             entityType: "character",
         });
 
-        expect(result.success).toBe(true);
         expect(result.imageGcsUri).toBe("gs://bucket/char.png");
         expect(generateImage).toHaveBeenCalled();
     });
@@ -98,7 +97,6 @@ describe("generateImageForScenario", () => {
             imagePrompt,
         });
 
-        expect(result.success).toBe(true);
         expect(result.imageGcsUri).toBe("gs://bucket/scene.png");
         // Verify R2I was used (parts should include hero.png)
         const callArgs = (generateImage as Mock).mock.calls[0][0];
@@ -248,12 +246,27 @@ describe("generateImageForScenario", () => {
             imageGcsUri: "gs://bucket/original.png",
         });
 
-        expect(result.success).toBe(true);
         expect(result.imageGcsUri).toBe("gs://bucket/edited.png");
 
         const callArgs = (generateImage as Mock).mock.calls[0][0];
         const callArgsString = JSON.stringify(callArgs);
         expect(callArgsString).toContain("gs://bucket/original.png");
         expect(callArgsString).toContain("Make it more dramatic");
+    });
+
+    it("should throw error if generation fails", async () => {
+        const { generateImage } = await import("@/lib/api/gemini");
+        (generateImage as Mock).mockResolvedValue({
+            success: false,
+            errorMessage: "Generation failed",
+        });
+
+        await expect(
+            generateImageForScenario({
+                scenario: mockScenario,
+                entity: mockScenario.characters[0],
+                entityType: "character",
+            }),
+        ).rejects.toThrow("Generation failed");
     });
 });

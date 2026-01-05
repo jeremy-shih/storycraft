@@ -47,7 +47,7 @@ export function ConversationalEditModal({
                 scenario,
             });
 
-            if (result.success && result.imageGcsUri) {
+            if (result.imageGcsUri) {
                 // Update the scene with the new image
                 const updatedScene = {
                     ...scene,
@@ -57,13 +57,6 @@ export function ConversationalEditModal({
                 onUpdate(updatedScene);
                 onClose();
                 setInstruction("");
-            } else {
-                // Update scene with error message
-                const updatedScene = {
-                    ...scene,
-                    errorMessage: result.errorMessage || "Failed to edit image",
-                };
-                onUpdate(updatedScene);
             }
         } catch (error) {
             console.error("Error editing image:", error);

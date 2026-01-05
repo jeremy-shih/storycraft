@@ -1,13 +1,12 @@
 import { TimelineLayer } from "@/app/types";
 import { storage } from "@/lib/storage/storage";
+import { getGcsDestination } from "@/lib/utils/storage-utils";
 import ffmpeg from "fluent-ffmpeg";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import { v4 as uuidv4 } from "uuid";
 import logger from "@/app/logger";
-
-const GCS_VIDEOS_STORAGE_URI = process.env.GCS_VIDEOS_STORAGE_URI || "";
 
 const MOOD_MUSIC: { [key: string]: string } = {
     Angry: "[Angry] Drop and Roll - Silent Partner.mp3",
@@ -35,7 +34,7 @@ export function signedUrlToGcsUri(signedUrl: string): string {
         // Extract bucket and path from pathname
         const parts = pathname.split("/");
         if (parts.length < 3) {
-            return "error less then 3 parts"; // Invalid pathname format
+            throw new Error("Invalid signed URL format: less than 3 parts");
         }
 
         const bucket = parts[1];
@@ -129,8 +128,17 @@ async function addAudioToVideoWithFadeOut(
     });
 }
 
+// Simple in-memory cache for audio durations: Map<filePath, duration>
+const durationCache = new Map<string, number>();
+const MAX_CACHE_SIZE = 100;
+
 function getAudioDuration(filePath: string): Promise<number> {
     return new Promise<number>((resolve, reject) => {
+        if (durationCache.has(filePath)) {
+            resolve(durationCache.get(filePath)!);
+            return;
+        }
+
         ffmpeg.ffprobe(filePath, (err, metadata) => {
             if (err) {
                 return reject(
@@ -142,7 +150,14 @@ function getAudioDuration(filePath: string): Promise<number> {
                 metadata.format &&
                 typeof metadata.format.duration === "number"
             ) {
-                resolve(metadata.format.duration);
+                const duration = metadata.format.duration;
+                // Simple LRU-like eviction
+                if (durationCache.size >= MAX_CACHE_SIZE) {
+                    const firstKey = durationCache.keys().next().value;
+                    if (firstKey) durationCache.delete(firstKey);
+                }
+                durationCache.set(filePath, duration);
+                resolve(duration);
             } else {
                 reject(new Error(`Could not get duration for ${filePath}`));
             }
@@ -589,13 +604,8 @@ export async function exportMovie(
 
         // Upload video to GCS
         logger.debug(`Upload result to GCS`);
-        const bucketName = GCS_VIDEOS_STORAGE_URI.replace("gs://", "").split(
-            "/",
-        )[0];
-        const destinationPath = path.join(
-            GCS_VIDEOS_STORAGE_URI.replace(`gs://${bucketName}/`, ""),
-            outputFileName,
-        );
+        const { bucketName, destinationPath } =
+            getGcsDestination(outputFileName);
         const bucket = storage.bucket(bucketName);
 
         await bucket.upload(finalOutputPath, {

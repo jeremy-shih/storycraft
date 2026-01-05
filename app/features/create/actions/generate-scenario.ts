@@ -11,6 +11,7 @@ import { generateScenarioSchema } from "@/app/schemas";
 import { DEFAULT_SETTINGS } from "@/lib/ai-config";
 import pLimit from "p-limit";
 import { requireAuth } from "@/lib/api/auth-utils";
+import { validateActionInput } from "@/lib/utils/validation";
 
 export async function generateScenario(
     name: string,
@@ -26,25 +27,22 @@ export async function generateScenario(
 ): Promise<Scenario> {
     await requireAuth();
     try {
-        const parseResult = generateScenarioSchema.safeParse({
-            name,
-            pitch,
-            numScenes,
-            style,
-            aspectRatio,
-            durationSeconds,
-            language,
-            modelName,
-            thinkingBudget,
-            styleImageUri,
-        });
-        if (!parseResult.success) {
-            logger.error(
-                "Validation error in generateScenario:",
-                parseResult.error,
-            );
-            throw new Error(`Invalid input: ${parseResult.error.message}`);
-        }
+        validateActionInput(
+            {
+                name,
+                pitch,
+                numScenes,
+                style,
+                aspectRatio,
+                durationSeconds,
+                language,
+                modelName,
+                thinkingBudget,
+                styleImageUri,
+            },
+            generateScenarioSchema,
+            "Invalid input",
+        );
 
         const prompt = getScenarioPrompt(pitch, numScenes, style, language);
         logger.debug("Create a scenario");
@@ -110,15 +108,23 @@ export async function generateScenario(
                             logger.debug(
                                 `Generating image for character ${index + 1}: ${character.name}`,
                             );
-                            const result = await generateImageForScenario({
-                                scenario,
-                                entity: character,
-                                entityType: "character",
-                            });
-                            return {
-                                ...character,
-                                imageGcsUri: result.imageGcsUri,
-                            };
+                            try {
+                                const result = await generateImageForScenario({
+                                    scenario,
+                                    entity: character,
+                                    entityType: "character",
+                                });
+                                return {
+                                    ...character,
+                                    imageGcsUri: result.imageGcsUri,
+                                };
+                            } catch (error) {
+                                logger.error(
+                                    `Failed to generate image for character ${character.name}:`,
+                                    error,
+                                );
+                                return character;
+                            }
                         }),
                     ),
                 ),
@@ -128,16 +134,24 @@ export async function generateScenario(
                             logger.debug(
                                 `Generating image for setting ${index + 1}: ${setting.name}`,
                             );
-                            const result = await generateImageForScenario({
-                                scenario,
-                                entity: setting,
-                                entityType: "setting",
-                                aspectRatio,
-                            });
-                            return {
-                                ...setting,
-                                imageGcsUri: result.imageGcsUri,
-                            };
+                            try {
+                                const result = await generateImageForScenario({
+                                    scenario,
+                                    entity: setting,
+                                    entityType: "setting",
+                                    aspectRatio,
+                                });
+                                return {
+                                    ...setting,
+                                    imageGcsUri: result.imageGcsUri,
+                                };
+                            } catch (error) {
+                                logger.error(
+                                    `Failed to generate image for setting ${setting.name}:`,
+                                    error,
+                                );
+                                return setting;
+                            }
                         }),
                     ),
                 ),
@@ -147,15 +161,23 @@ export async function generateScenario(
                             logger.debug(
                                 `Generating image for prop ${index + 1}: ${prop.name}`,
                             );
-                            const result = await generateImageForScenario({
-                                scenario,
-                                entity: prop,
-                                entityType: "prop",
-                            });
-                            return {
-                                ...prop,
-                                imageGcsUri: result.imageGcsUri,
-                            };
+                            try {
+                                const result = await generateImageForScenario({
+                                    scenario,
+                                    entity: prop,
+                                    entityType: "prop",
+                                });
+                                return {
+                                    ...prop,
+                                    imageGcsUri: result.imageGcsUri,
+                                };
+                            } catch (error) {
+                                logger.error(
+                                    `Failed to generate image for prop ${prop.name}:`,
+                                    error,
+                                );
+                                return prop;
+                            }
                         }),
                     ) || [],
                 ),

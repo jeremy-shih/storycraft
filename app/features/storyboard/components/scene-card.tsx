@@ -93,6 +93,9 @@ export const SceneCard = memo(function SceneCard({
                         className="cursor-grab rounded-full bg-black/40 p-2 text-white backdrop-blur-md hover:bg-primary/80 active:cursor-grabbing"
                         title="Drag to reorder"
                         onMouseDown={(e) => e.stopPropagation()}
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Drag to reorder"
                     >
                         <GripVertical className="h-4 w-4" />
                     </div>
@@ -115,7 +118,7 @@ export const SceneCard = memo(function SceneCard({
                 ) : (
                     <GcsImage
                         gcsUri={scene.imageGcsUri || null}
-                        alt={`Scene ${sceneNumber}`}
+                        alt={scene.description || `Scene ${sceneNumber}`}
                         className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
@@ -132,6 +135,7 @@ export const SceneCard = memo(function SceneCard({
                                 onClick={onRegenerateImage}
                                 disabled={isGenerating}
                                 title="Regenerate Image"
+                                aria-label="Regenerate Image"
                             >
                                 <RefreshCw className="h-3.5 w-3.5" />
                             </Button>
@@ -142,6 +146,7 @@ export const SceneCard = memo(function SceneCard({
                                 onClick={handleUploadClick}
                                 disabled={isGenerating}
                                 title="Upload Image"
+                                aria-label="Upload Image"
                             >
                                 <Upload className="h-3.5 w-3.5" />
                             </Button>
@@ -154,6 +159,7 @@ export const SceneCard = memo(function SceneCard({
                                 }
                                 disabled={isGenerating}
                                 title="Magic Edit"
+                                aria-label="Magic Edit"
                             >
                                 <MessageCircle className="h-3.5 w-3.5" />
                             </Button>
@@ -167,6 +173,7 @@ export const SceneCard = memo(function SceneCard({
                                 onClick={onGenerateVideo}
                                 disabled={isGenerating}
                                 title="Generate Video"
+                                aria-label="Generate Video"
                             >
                                 <Video className="h-3.5 w-3.5" />
                             </Button>
@@ -178,6 +185,7 @@ export const SceneCard = memo(function SceneCard({
                                     onClick={onRemoveScene}
                                     disabled={isGenerating}
                                     title="Delete Scene"
+                                    aria-label="Delete Scene"
                                 >
                                     <Trash2 className="h-3.5 w-3.5" />
                                 </Button>

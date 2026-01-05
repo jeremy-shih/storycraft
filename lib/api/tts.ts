@@ -3,9 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { v4 as uuidv4 } from "uuid";
 import logger from "@/app/logger";
-import { storage } from "@/lib/storage/storage";
-
-const GCS_VIDEOS_STORAGE_URI = process.env.GCS_VIDEOS_STORAGE_URI || "";
+import { uploadBufferToGcs } from "@/lib/utils/storage-utils";
 
 // Use a global variable to ensure the client is reused across HMR in development
 const globalForTTS = global as unknown as {
@@ -19,6 +17,12 @@ if (process.env.NODE_ENV !== "production") {
     globalForTTS.client = client;
 }
 
+// Simple in-memory cache for voices: Map<languageCode, { voices: IVoice[], timestamp: number }>
+const voiceCache = new Map<
+    string,
+    { voices: protos.google.cloud.texttospeech.v1.IVoice[]; timestamp: number }
+>();
+
 export async function tts(
     text: string,
     language: string,
@@ -28,7 +32,29 @@ export async function tts(
         {
             languageCode: language,
         };
-    const [response] = await client.listVoices(listVoicesRequest);
+
+    // Cache key based on language
+    const cacheKey = language;
+    const now = Date.now();
+    const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+    let response: protos.google.cloud.texttospeech.v1.IListVoicesResponse;
+
+    if (
+        voiceCache.has(cacheKey) &&
+        now - voiceCache.get(cacheKey)!.timestamp < CACHE_TTL
+    ) {
+        response = { voices: voiceCache.get(cacheKey)!.voices };
+    } else {
+        const [apiResponse] = await client.listVoices(listVoicesRequest);
+        response = apiResponse;
+        if (response.voices) {
+            voiceCache.set(cacheKey, {
+                voices: response.voices,
+                timestamp: now,
+            });
+        }
+    }
 
     //logger.debug(response)
     // log every voices containing the selected voice name
@@ -103,22 +129,11 @@ export async function tts(
         // Return the relative file path (for serving the file)
         // Upload video to GCS
         logger.debug(`Upload result to GCS`);
-        const bucketName = GCS_VIDEOS_STORAGE_URI.replace("gs://", "").split(
-            "/",
-        )[0];
-        const destinationPath = path.join(
-            GCS_VIDEOS_STORAGE_URI.replace(`gs://${bucketName}/`, ""),
+        return await uploadBufferToGcs(
+            Buffer.from(audioContent),
             fileName,
+            "audio/mpeg",
         );
-        const bucket = storage.bucket(bucketName);
-        const file = bucket.file(destinationPath);
-
-        await file.save(audioContent, {
-            metadata: {
-                contentType: `audio/mpeg`, // Set the correct content type
-            },
-        });
-        return file.cloudStorageURI.href;
     } catch (error) {
         logger.error("Error in tts function:", error);
         throw error;

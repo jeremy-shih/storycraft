@@ -5,9 +5,8 @@ import { concatenateMusicWithFade } from "@/lib/utils/ffmpeg";
 import logger from "@/app/logger";
 import { withRetry } from "@/lib/utils/retry";
 import { getAccessToken } from "./auth-utils";
-import { storage } from "@/lib/storage/storage";
+import { uploadBufferToGcs } from "@/lib/utils/storage-utils";
 
-const GCS_VIDEOS_STORAGE_URI = process.env.GCS_VIDEOS_STORAGE_URI || "";
 const LOCATION = process.env.LOCATION;
 const PROJECT_ID = process.env.PROJECT_ID;
 const MODEL = "lyria-002";
@@ -65,24 +64,11 @@ export async function generateMusicRest(prompt: string): Promise<string> {
             // Return the relative file path (for serving the file)
             // Upload to GCS
             logger.debug(`Upload result to GCS`);
-            const bucketName = GCS_VIDEOS_STORAGE_URI.replace(
-                "gs://",
-                "",
-            ).split("/")[0];
-            const destinationPath = path.join(
-                GCS_VIDEOS_STORAGE_URI.replace(`gs://${bucketName}/`, ""),
+            return await uploadBufferToGcs(
+                outputBuffer,
                 fileName,
+                "audio/mpeg",
             );
-            const bucket = storage.bucket(bucketName);
-            const file = bucket.file(destinationPath);
-
-            await file.save(outputBuffer, {
-                metadata: {
-                    contentType: `audio/mpeg`, // Set the correct content type for MP3
-                },
-            });
-
-            return file.cloudStorageURI.href;
         },
         { maxRetries: 1 },
     );

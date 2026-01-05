@@ -5,6 +5,7 @@ import logger from "@/app/logger";
 import { conversationalEditSchema } from "@/app/schemas";
 import { Scenario } from "@/app/types";
 import { requireAuth } from "@/lib/api/auth-utils";
+import { validateActionInput } from "@/lib/utils/validation";
 
 interface ConversationalEditParams {
     imageGcsUri: string;
@@ -14,30 +15,18 @@ interface ConversationalEditParams {
     scenario?: Scenario; // Optional scenario context
 }
 
-interface ConversationalEditResult {
-    success: boolean;
-    imageGcsUri?: string;
-    errorMessage?: string;
-}
-
 export async function conversationalEdit(
     params: ConversationalEditParams,
-): Promise<ConversationalEditResult> {
+): Promise<{ imageGcsUri: string }> {
     await requireAuth();
     const { imageGcsUri, instruction, sceneNumber, scenarioId, scenario } =
         params;
     try {
-        const parseResult = conversationalEditSchema.safeParse(params);
-        if (!parseResult.success) {
-            logger.error(
-                "Validation error in conversationalEdit:",
-                parseResult.error,
-            );
-            return {
-                success: false,
-                errorMessage: `Invalid input: ${parseResult.error.message}`,
-            };
-        }
+        validateActionInput(
+            params,
+            conversationalEditSchema,
+            "Validation error in conversationalEdit",
+        );
 
         logger.info(
             `Starting conversational edit for scene ${sceneNumber} in scenario ${scenarioId}`,
@@ -51,31 +40,21 @@ export async function conversationalEdit(
             imageGcsUri,
         });
 
-        if (result.success && result.imageGcsUri) {
+        if (result.imageGcsUri) {
             logger.info(
                 `Successfully edited image for scene ${sceneNumber}. New image URI: ${result.imageGcsUri}`,
             );
             return {
-                success: true,
                 imageGcsUri: result.imageGcsUri,
             };
         } else {
-            logger.error(
-                `Failed to edit image for scene ${sceneNumber}: ${result.errorMessage}`,
-            );
-            return {
-                success: false,
-                errorMessage: result.errorMessage || "Failed to edit image",
-            };
+            throw new Error("Failed to edit image: No URI returned");
         }
     } catch (error) {
         logger.error(
             `Error in conversational edit for scene ${params.sceneNumber}:`,
             error,
         );
-        return {
-            success: false,
-            errorMessage: "An error occurred while editing the image",
-        };
+        throw error;
     }
 }

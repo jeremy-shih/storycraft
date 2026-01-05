@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { Scenario, Language } from "@/app/types";
 
 const DEFAULT_LANGUAGE: Language = {
@@ -62,26 +62,51 @@ const initialState = {
 };
 
 export const useScenarioStore = create<ScenarioState>()(
-    devtools((set) => ({
-        ...initialState,
+    devtools(
+        persist(
+            (set) => ({
+                ...initialState,
 
-        setField: (field, value) =>
-            set(
-                (state) => ({ ...state, [field]: value }),
-                false,
-                `set_${field}`,
-            ),
+                setField: (field, value) =>
+                    set(
+                        (state) => ({ ...state, [field]: value }),
+                        false,
+                        `set_${field}`,
+                    ),
 
-        setScenario: (scenario) => set({ scenario }, false, "setScenario"),
+                setScenario: (scenario) =>
+                    set({ scenario }, false, "setScenario"),
 
-        setErrorMessage: (errorMessage) => {
-            set({ errorMessage }, false, "setErrorMessage");
-        },
+                setErrorMessage: (errorMessage) => {
+                    set({ errorMessage }, false, "setErrorMessage");
+                },
 
-        setVideoUri: (videoUri) => set({ videoUri }, false, "setVideoUri"),
+                setVideoUri: (videoUri) =>
+                    set({ videoUri }, false, "setVideoUri"),
 
-        setVttUri: (vttUri) => set({ vttUri }, false, "setVttUri"),
+                setVttUri: (vttUri) => set({ vttUri }, false, "setVttUri"),
 
-        reset: () => set(initialState, false, "reset"),
-    })),
+                reset: () => set(initialState, false, "reset"),
+            }),
+            {
+                name: "scenario-storage",
+                partialize: (state) => ({
+                    pitch: state.pitch,
+                    name: state.name,
+                    style: state.style,
+                    aspectRatio: state.aspectRatio,
+                    durationSeconds: state.durationSeconds,
+                    language: state.language,
+                    styleImageUri: state.styleImageUri,
+                    logoOverlay: state.logoOverlay,
+                    numScenes: state.numScenes,
+                    withVoiceOver: state.withVoiceOver,
+                    scenario: state.scenario,
+                    currentScenarioId: state.currentScenarioId,
+                    videoUri: state.videoUri,
+                    vttUri: state.vttUri,
+                }),
+            },
+        ),
+    ),
 );

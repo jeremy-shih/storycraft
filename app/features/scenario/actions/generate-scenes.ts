@@ -11,6 +11,7 @@ import { generateStoryboardSchema } from "@/app/schemas";
 import { DEFAULT_SETTINGS } from "@/lib/ai-config";
 import pLimit from "p-limit";
 import { requireAuth } from "@/lib/api/auth-utils";
+import { validateActionInput } from "@/lib/utils/validation";
 
 export async function generateStoryboard(
     scenario: Scenario,
@@ -30,21 +31,18 @@ export async function generateStoryboard(
             scenes: scenario.scenes || [],
         };
 
-        const parseResult = generateStoryboardSchema.safeParse({
-            scenario: scenarioToValidate,
-            numScenes,
-            style,
-            language,
-            modelName,
-            thinkingBudget,
-        });
-        if (!parseResult.success) {
-            logger.error(
-                "Validation error in generateStoryboard:",
-                parseResult.error,
-            );
-            throw new Error(`Invalid input: ${parseResult.error.message}`);
-        }
+        validateActionInput(
+            {
+                scenario: scenarioToValidate,
+                numScenes,
+                style,
+                language,
+                modelName,
+                thinkingBudget,
+            },
+            generateStoryboardSchema,
+            "Validation error in generateStoryboard",
+        );
 
         // Create a new scenario object to ensure proper serialization
         const newScenario: Scenario = {
@@ -97,14 +95,10 @@ export async function generateStoryboard(
                             imagePrompt: scene.imagePrompt,
                         });
 
-                        if (result.success) {
-                            return {
-                                ...scene,
-                                imageGcsUri: result.imageGcsUri!,
-                            };
-                        } else {
-                            throw new Error(result.errorMessage);
-                        }
+                        return {
+                            ...scene,
+                            imageGcsUri: result.imageGcsUri,
+                        };
                     } catch (error) {
                         logger.error("Error generating image:", error);
                         if (error instanceof Error) {
