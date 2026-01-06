@@ -31,7 +31,9 @@ export const GET = withAuth(async (req) => {
 
         return NextResponse.json(result, {
             headers: {
-                "Cache-Control": "private, max-age=3000",
+                // cache for 10 minutes (600s)
+                // Total age potential = Server Cache (45m) + Client Cache (10m) = 55m < 60m URL validity. Safe.
+                "Cache-Control": "private, max-age=600",
             },
         });
     } catch (error) {

@@ -69,7 +69,7 @@ export async function getDynamicImageUrl(
         },
         ["gcs-signed-url", gcsUri, String(download)], // Unique key per URI and download flag
         {
-            revalidate: 60 * 30, // Revalidate every 30 minutes (1800 seconds)
+            revalidate: 60 * 45, // Revalidate every 45 minutes (2700 seconds) - Leaves 15m buffer with 60m expiry
             tags: ["gcs-url"],
         },
     )(gcsUri, download);

@@ -50,7 +50,12 @@ export const GcsImage = memo(function GcsImage({
             }
         },
         enabled: !!gcsUri,
-        staleTime: 60 * 1000 * 15,
+        // prevent infinite loop if backend error
+        retry: (failureCount, error) => {
+            if (error.message.includes("400")) return false;
+            return failureCount < 2;
+        },
+        staleTime: 60 * 1000 * 10, // 10 minutes to match API cache
     });
 
     const imageUrl = imageData?.url || null;
