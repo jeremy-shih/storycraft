@@ -66,20 +66,20 @@ export function GridView({
                 />
             ))}
             <Card
-                className="cursor-pointer overflow-hidden border-2 border-dashed transition-colors hover:bg-accent/50"
+                className="hover:bg-accent/50 cursor-pointer overflow-hidden border-2 border-dashed transition-colors"
                 onClick={onAddScene}
             >
                 <div className="flex h-full flex-col">
-                    <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden bg-muted/30">
+                    <div className="bg-muted/30 relative flex aspect-video w-full items-center justify-center overflow-hidden">
                         <div className="text-center">
-                            <Plus className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-                            <p className="text-sm text-muted-foreground">
+                            <Plus className="text-muted-foreground mx-auto mb-2 h-12 w-12" />
+                            <p className="text-muted-foreground text-sm">
                                 Add Scene
                             </p>
                         </div>
                     </div>
                     <CardContent className="flex flex-1 items-center justify-center p-4">
-                        <p className="text-center text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-center text-sm">
                             Click to add a new scene
                         </p>
                     </CardContent>

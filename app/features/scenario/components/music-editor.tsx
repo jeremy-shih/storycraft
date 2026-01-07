@@ -60,7 +60,7 @@ export const MusicEditor = memo(function MusicEditor({
             </div>
 
             <div
-                className={`rounded-xl border p-6 transition-all ${isEditing ? "bg-accent/5 shadow-lg ring-1 ring-accent/20" : "bg-card hover:shadow-md"}`}
+                className={`rounded-xl border p-6 transition-all ${isEditing ? "bg-accent/5 ring-accent/20 shadow-lg ring-1" : "bg-card hover:shadow-md"}`}
             >
                 {isEditing ? (
                     <div className="space-y-4">
@@ -78,8 +78,8 @@ export const MusicEditor = memo(function MusicEditor({
                         />
                     </div>
                 ) : (
-                    <div className="prose prose-sm max-w-none rounded-lg border border-transparent bg-muted/30 p-4 text-muted-foreground transition-colors hover:border-border/50">
-                        <p className="whitespace-pre-wrap leading-relaxed">
+                    <div className="prose prose-sm bg-muted/30 text-muted-foreground hover:border-border/50 max-w-none rounded-lg border border-transparent p-4 transition-colors">
+                        <p className="leading-relaxed whitespace-pre-wrap">
                             {music}
                         </p>
                     </div>

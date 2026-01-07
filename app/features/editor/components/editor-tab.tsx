@@ -576,7 +576,7 @@ export const EditorTab = memo(function EditorTab() {
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                             <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
                                 <div
-                                    className="h-full bg-primary transition-all duration-300"
+                                    className="bg-primary h-full transition-all duration-300"
                                     style={{ width: `${exportProgress}%` }}
                                 />
                             </div>
@@ -587,7 +587,7 @@ export const EditorTab = memo(function EditorTab() {
                         size="lg"
                         onClick={() => handleExportMovie(layers)}
                         disabled={isExporting}
-                        className="rounded-2xl bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl shadow-sm"
                     >
                         {isExporting ? (
                             <>

@@ -22,9 +22,9 @@ export function VideoConfigForm({
     totalLength,
 }: VideoConfigFormProps) {
     return (
-        <Card className="flex-[2] border border-border shadow-none">
-            <CardHeader className="flex flex-row items-center space-x-2 space-y-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Card className="border-border flex-[2] border shadow-none">
+            <CardHeader className="flex flex-row items-center space-y-0 space-x-2">
+                <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
                     <Video className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-lg">Video Configuration</CardTitle>
@@ -32,7 +32,7 @@ export function VideoConfigForm({
             <CardContent className="space-y-8">
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <Label className="uppercase tracking-wider text-muted-foreground">
+                        <Label className="text-muted-foreground tracking-wider uppercase">
                             Scene Count
                         </Label>
                         <div className="flex items-center gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
@@ -64,7 +64,7 @@ export function VideoConfigForm({
 
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                            <Label className="uppercase tracking-wider text-muted-foreground">
+                            <Label className="text-muted-foreground tracking-wider uppercase">
                                 Duration per scene
                             </Label>
                             <span className="font-bold text-[#0EA5E9]">
@@ -79,7 +79,7 @@ export function VideoConfigForm({
                                 value={durationSeconds}
                                 onValueChange={(val) => setDurationSeconds(val)}
                             />
-                            <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
+                            <div className="text-muted-foreground mt-2 flex justify-between text-[10px]">
                                 {" "}
                                 <span>4s</span>
                                 <span>6s</span>
@@ -90,7 +90,7 @@ export function VideoConfigForm({
                 </div>
 
                 <div className="flex items-center justify-between border-t pt-4">
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                         Total Length
                     </span>
                     <div className="flex items-center gap-2 text-lg font-bold">

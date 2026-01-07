@@ -113,7 +113,7 @@ export function StoriesTab({
     if (!session?.user?.id) {
         return (
             <div className="py-12 text-center">
-                <BookOpen className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                <BookOpen className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
                 <h3 className="mb-2 text-lg font-semibold">
                     Sign in to view your stories
                 </h3>
@@ -127,7 +127,7 @@ export function StoriesTab({
     if (isLoading) {
         return (
             <div className="py-12 text-center">
-                <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
                 <p className="text-muted-foreground">Loading your stories...</p>
             </div>
         );
@@ -150,9 +150,9 @@ export function StoriesTab({
     if (scenarios.length === 0) {
         return (
             <div className="py-12 text-center">
-                <BookOpen className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                <BookOpen className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
                 <h3 className="mb-2 text-lg font-semibold">No stories yet</h3>
-                <p className="mb-4 text-muted-foreground">
+                <p className="text-muted-foreground mb-4">
                     Create your first story to get started!
                 </p>
                 <Button onClick={onCreateNewStory}>
@@ -191,14 +191,14 @@ export function StoriesTab({
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {/* Create New Story Card */}
                 <Card
-                    className="cursor-pointer border-2 border-dashed border-primary/30 transition-shadow hover:border-primary/50 hover:shadow-lg"
+                    className="border-primary/30 hover:border-primary/50 cursor-pointer border-2 border-dashed transition-shadow hover:shadow-lg"
                     onClick={onCreateNewStory}
                 >
                     <CardHeader className="pb-3">
                         <div className="flex h-24 items-center justify-center">
                             <div className="text-center">
-                                <Plus className="mx-auto mb-2 h-8 w-8 text-primary" />
-                                <CardTitle className="text-lg text-primary">
+                                <Plus className="text-primary mx-auto mb-2 h-8 w-8" />
+                                <CardTitle className="text-primary text-lg">
                                     Create New Story
                                 </CardTitle>
                             </div>
@@ -206,7 +206,7 @@ export function StoriesTab({
                     </CardHeader>
                     <CardContent className="pt-0">
                         <div className="text-center">
-                            <p className="mb-3 text-sm text-muted-foreground">
+                            <p className="text-muted-foreground mb-3 text-sm">
                                 Start fresh with a new story idea
                             </p>
                             <Button size="sm" className="w-full">
@@ -242,7 +242,7 @@ export function StoriesTab({
                                     </CardTitle>
                                     <CardDescription className="mt-1">
                                         {scenario.style && (
-                                            <span className="mr-2 inline-block rounded-full bg-primary/10 px-2 py-1 text-xs text-primary">
+                                            <span className="bg-primary/10 text-primary mr-2 inline-block rounded-full px-2 py-1 text-xs">
                                                 {scenario.style}
                                             </span>
                                         )}
@@ -269,14 +269,14 @@ export function StoriesTab({
                         </CardHeader>
                         <CardContent className="pt-0">
                             <div className="space-y-3">
-                                <div className="flex items-center text-sm text-muted-foreground">
+                                <div className="text-muted-foreground flex items-center text-sm">
                                     <Clock className="mr-2 h-4 w-4" />
                                     <span>
                                         {scenario.scenes?.length || 0} scenes
                                     </span>
                                 </div>
 
-                                <div className="flex items-center text-sm text-muted-foreground">
+                                <div className="text-muted-foreground flex items-center text-sm">
                                     <Calendar className="mr-2 h-4 w-4" />
                                     <span>
                                         Updated {formatDate(scenario.updatedAt)}

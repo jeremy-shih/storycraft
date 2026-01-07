@@ -74,7 +74,7 @@ export function UserProfile({ isCollapsed }: { isCollapsed: boolean }) {
         <div className="user-profile-dropdown relative">
             <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex cursor-pointer items-center gap-2 rounded-md bg-muted p-2 transition-colors hover:bg-muted/80"
+                className="bg-muted hover:bg-muted/80 flex cursor-pointer items-center gap-2 rounded-md p-2 transition-colors"
             >
                 {displayPicture ? (
                     <Image
@@ -93,7 +93,7 @@ export function UserProfile({ isCollapsed }: { isCollapsed: boolean }) {
                 )}
                 {!isCollapsed && (
                     <>
-                        <span className="truncate text-sm font-medium text-foreground">
+                        <span className="text-foreground truncate text-sm font-medium">
                             {displayName}
                         </span>
                         <ChevronDown
@@ -106,14 +106,14 @@ export function UserProfile({ isCollapsed }: { isCollapsed: boolean }) {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-                <div className="absolute left-0 top-full z-50 mt-2 w-48 rounded-md border border-border bg-card shadow-lg">
+                <div className="border-border bg-card absolute top-full left-0 z-50 mt-2 w-48 rounded-md border shadow-lg">
                     <div className="py-1">
                         {/* User Info */}
-                        <div className="border-b border-border px-4 py-2">
-                            <div className="text-sm font-medium text-foreground">
+                        <div className="border-border border-b px-4 py-2">
+                            <div className="text-foreground text-sm font-medium">
                                 {displayName}
                             </div>
-                            <div className="truncate text-xs text-muted-foreground">
+                            <div className="text-muted-foreground truncate text-xs">
                                 {user.email}
                             </div>
                         </div>
@@ -121,7 +121,7 @@ export function UserProfile({ isCollapsed }: { isCollapsed: boolean }) {
                         {/* Sign Out Option */}
                         <button
                             onClick={handleSignOut}
-                            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+                            className="text-foreground hover:bg-muted flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors"
                         >
                             <LogOut size={16} />
                             Sign Out

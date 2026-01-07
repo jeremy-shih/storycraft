@@ -14,7 +14,7 @@ export const TopNav = memo(function TopNav() {
     const activeIndex = steps.findIndex((s) => s.id === activeTab);
 
     return (
-        <nav className="my-3 flex w-fit items-center rounded-full border border-border/60 bg-card/30 p-1 shadow-sm backdrop-blur-md">
+        <nav className="border-border/60 bg-card/30 my-3 flex w-fit items-center rounded-full border p-1 shadow-sm backdrop-blur-md">
             {steps.map((step, index) => {
                 const isActive = activeTab === step.id;
                 const isCompleted = index < activeIndex;
@@ -23,7 +23,7 @@ export const TopNav = memo(function TopNav() {
                 return (
                     <div key={step.id} className="flex items-center">
                         {!isFirst && (
-                            <div className="mx-0.5 h-5 w-[1px] bg-border/40" />
+                            <div className="bg-border/40 mx-0.5 h-5 w-[1px]" />
                         )}
                         <button
                             disabled={step.disabled}
@@ -34,7 +34,7 @@ export const TopNav = memo(function TopNav() {
                                     ? "bg-blue-50 text-blue-600 shadow-[0_0_0_1px_rgba(59,130,246,0.1)]"
                                     : isCompleted
                                       ? "text-slate-900"
-                                      : "text-slate-500 hover:bg-muted/50 hover:text-slate-700",
+                                      : "hover:bg-muted/50 text-slate-500 hover:text-slate-700",
                                 step.disabled &&
                                     "cursor-not-allowed opacity-40 hover:bg-transparent",
                             )}

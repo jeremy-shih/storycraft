@@ -52,8 +52,8 @@ export const TimelineLayer = memo(function TimelineLayer({
     onOpenMusicDialog,
 }: TimelineLayerProps) {
     return (
-        <div className="relative h-12 rounded border border-border bg-card">
-            <div className="absolute -left-24 top-0 flex h-full select-none items-center px-2 text-sm font-medium">
+        <div className="border-border bg-card relative h-12 rounded border">
+            <div className="absolute top-0 -left-24 flex h-full items-center px-2 text-sm font-medium select-none">
                 {layer.name}
             </div>
             <div className="relative h-full">
@@ -113,7 +113,7 @@ export const TimelineLayer = memo(function TimelineLayer({
                         );
                     })
                 ) : (
-                    <div className="flex h-full w-full items-center justify-center rounded border border-border bg-muted p-1">
+                    <div className="border-border bg-muted flex h-full w-full items-center justify-center rounded border p-1">
                         {layer.type === "voiceover" ? (
                             <Button
                                 variant="secondary"

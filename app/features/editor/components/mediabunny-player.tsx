@@ -964,7 +964,7 @@ export function MediabunnyPlayer({
                 )}
 
                 {logoOverlay && (
-                    <div className="absolute right-4 top-4 aspect-video w-24">
+                    <div className="absolute top-4 right-4 aspect-video w-24">
                         <Image
                             src={logoOverlay}
                             alt="Logo Overlay"

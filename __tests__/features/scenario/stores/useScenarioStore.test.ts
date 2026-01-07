@@ -53,7 +53,7 @@ describe("useScenarioStore", () => {
     });
 
     it("should set scenario", () => {
-        const mockScenario = { id: "123", name: "Mock" } as unknown as Scenario;
+        const mockScenario = { id: "123", name: "Mock", scenes: [] } as unknown as Scenario;
         useScenarioStore.getState().setScenario(mockScenario);
 
         expect(useScenarioStore.getState().scenario).toEqual(mockScenario);

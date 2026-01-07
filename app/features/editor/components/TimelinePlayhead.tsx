@@ -7,14 +7,14 @@ interface TimelinePlayheadProps {
 export function TimelinePlayhead({ currentTime }: TimelinePlayheadProps) {
     return (
         <div
-            className="pointer-events-none absolute bottom-0 top-0 z-10 w-0.5 bg-red-500 transition-none"
+            className="pointer-events-none absolute top-0 bottom-0 z-10 w-0.5 bg-red-500 transition-none"
             style={{
                 left: `${(currentTime / TIMELINE_DURATION) * 100}%`,
                 height: "100%",
                 willChange: "left",
             }}
         >
-            <div className="absolute -left-2 -top-2 h-4 w-4 rounded-full bg-red-500 shadow-md" />
+            <div className="absolute -top-2 -left-2 h-4 w-4 rounded-full bg-red-500 shadow-md" />
         </div>
     );
 }

@@ -91,7 +91,7 @@ export function SceneData({
             <div className="flex flex-col">
                 <div className="group relative aspect-[11/6] w-full overflow-hidden">
                     {isGenerating && (
-                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-opacity-50 absolute inset-0 z-10 flex items-center justify-center bg-black">
                             <Loader2 className="h-8 w-8 animate-spin text-white" />
                         </div>
                     )}
@@ -112,7 +112,7 @@ export function SceneData({
                     )}
                     {!hideControls && (
                         <>
-                            <div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
+                            <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
                                 <Button
                                     variant="secondary"
                                     size="icon"
@@ -127,7 +127,7 @@ export function SceneData({
                                     </span>
                                 </Button>
                             </div>
-                            <div className="absolute left-2 top-2 flex space-x-2 opacity-0 transition-opacity group-hover:opacity-100">
+                            <div className="absolute top-2 left-2 flex space-x-2 opacity-0 transition-opacity group-hover:opacity-100">
                                 <Button
                                     variant="secondary"
                                     size="icon"
@@ -178,7 +178,7 @@ export function SceneData({
                                 />
                             </div>
                             {canDelete && (
-                                <div className="absolute bottom-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
+                                <div className="absolute right-2 bottom-2 opacity-0 transition-opacity group-hover:opacity-100">
                                     <Button
                                         variant="secondary"
                                         size="icon"
@@ -196,7 +196,7 @@ export function SceneData({
                             )}
                             <div className="absolute bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
                                 <div
-                                    className="cursor-grab touch-none select-none rounded bg-black/50 p-1.5 transition-colors hover:bg-blue-500 hover:text-white active:cursor-grabbing"
+                                    className="cursor-grab touch-none rounded bg-black/50 p-1.5 transition-colors select-none hover:bg-blue-500 hover:text-white active:cursor-grabbing"
                                     title="Drag to reorder scene"
                                     onMouseDown={(e) => e.stopPropagation()}
                                     role="button"
@@ -211,7 +211,7 @@ export function SceneData({
                 </div>
                 <CardContent className="p-4">
                     <div className="mb-2 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-primary">
+                        <h3 className="text-primary text-lg font-semibold">
                             Scene {sceneNumber}
                         </h3>
                         <Button
@@ -229,7 +229,7 @@ export function SceneData({
                             {scene.errorMessage}
                         </p>
                     )}
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                         {scene.description}
                     </p>
                 </CardContent>

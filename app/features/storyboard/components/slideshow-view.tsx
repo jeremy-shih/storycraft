@@ -64,7 +64,7 @@ export function SlideshowView({
                     variant="ghost"
                     size="icon"
                     onClick={goToPrevious}
-                    className="absolute left-2 top-1/2 z-10 -translate-y-1/2 bg-black/50 text-white opacity-0 transition-opacity hover:bg-black/75 group-hover:opacity-100"
+                    className="absolute top-1/2 left-2 z-10 -translate-y-1/2 bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/75"
                 >
                     <ChevronLeft className="h-6 w-6" />
                     <span className="sr-only">Previous scene</span>
@@ -73,7 +73,7 @@ export function SlideshowView({
                     variant="ghost"
                     size="icon"
                     onClick={goToNext}
-                    className="absolute right-2 top-1/2 z-10 -translate-y-1/2 bg-black/50 text-white opacity-0 transition-opacity hover:bg-black/75 group-hover:opacity-100"
+                    className="absolute top-1/2 right-2 z-10 -translate-y-1/2 bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/75"
                 >
                     <ChevronRight className="h-6 w-6" />
                     <span className="sr-only">Next scene</span>
@@ -95,13 +95,13 @@ export function SlideshowView({
                 </div>
             </div>
             <div className="mt-4 space-y-4">
-                <div className="rounded-lg border bg-card p-4">
-                    <h3 className="mb-2 font-semibold text-card-foreground">
+                <div className="bg-card rounded-lg border p-4">
+                    <h3 className="text-card-foreground mb-2 font-semibold">
                         Scene {effectiveCurrentSlide + 1}
                     </h3>
                     <div className="space-y-4">
                         <div>
-                            <h4 className="mb-1 text-sm font-medium text-card-foreground">
+                            <h4 className="text-card-foreground mb-1 text-sm font-medium">
                                 Image Prompt
                             </h4>
                             <ImagePromptDisplay
@@ -109,10 +109,10 @@ export function SlideshowView({
                             />
                         </div>
                         <div>
-                            <h4 className="mb-1 text-sm font-medium text-card-foreground">
+                            <h4 className="text-card-foreground mb-1 text-sm font-medium">
                                 Voiceover
                             </h4>
-                            <p className="text-sm text-card-foreground/80">
+                            <p className="text-card-foreground/80 text-sm">
                                 {currentScene.voiceover}
                             </p>
                         </div>
@@ -122,7 +122,7 @@ export function SlideshowView({
                     <Button
                         variant="outline"
                         onClick={onAddScene}
-                        className="border-2 border-dashed hover:bg-accent"
+                        className="hover:bg-accent border-2 border-dashed"
                     >
                         <Plus className="mr-2 h-4 w-4" />
                         Add Scene

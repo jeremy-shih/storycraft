@@ -11,19 +11,19 @@ export function ImagePromptDisplay({
         <div className="space-y-3">
             <div>
                 <span className="text-xs font-medium">Style:</span>
-                <p className="text-sm text-card-foreground/80">
+                <p className="text-card-foreground/80 text-sm">
                     {imagePrompt.Style}
                 </p>
             </div>
             <div>
                 <span className="text-xs font-medium">Scene:</span>
-                <p className="text-sm text-card-foreground/80">
+                <p className="text-card-foreground/80 text-sm">
                     {imagePrompt.Scene}
                 </p>
             </div>
             <div>
                 <span className="text-xs font-medium">Composition:</span>
-                <p className="text-sm text-card-foreground/80">
+                <p className="text-card-foreground/80 text-sm">
                     {imagePrompt.Composition.shot_type},{" "}
                     {imagePrompt.Composition.lighting},{" "}
                     {imagePrompt.Composition.overall_mood}
@@ -34,7 +34,7 @@ export function ImagePromptDisplay({
                 {imagePrompt.Subject.map((subject, index) => (
                     <p
                         key={index}
-                        className="ml-2 text-sm text-card-foreground/80"
+                        className="text-card-foreground/80 ml-2 text-sm"
                     >
                         • {subject.name}
                     </p>
@@ -46,7 +46,7 @@ export function ImagePromptDisplay({
                     {imagePrompt.Prop.map((prop, index) => (
                         <p
                             key={index}
-                            className="ml-2 text-sm text-card-foreground/80"
+                            className="text-card-foreground/80 ml-2 text-sm"
                         >
                             • {prop.name}
                         </p>
@@ -58,7 +58,7 @@ export function ImagePromptDisplay({
                 {imagePrompt.Context.map((context, index) => (
                     <p
                         key={index}
-                        className="ml-2 text-sm text-card-foreground/80"
+                        className="text-card-foreground/80 ml-2 text-sm"
                     >
                         • {context.name}
                     </p>

@@ -39,9 +39,9 @@ export function StoryBasicsForm({
     setLanguage,
 }: StoryBasicsFormProps) {
     return (
-        <Card className="border border-border shadow-none md:col-span-3 lg:col-span-2">
-            <CardHeader className="flex flex-row items-center space-x-2 space-y-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Card className="border-border border shadow-none md:col-span-3 lg:col-span-2">
+            <CardHeader className="flex flex-row items-center space-y-0 space-x-2">
+                <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
                     <Clapperboard className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-xl">Story Basics</CardTitle>
@@ -69,18 +69,18 @@ export function StoryBasicsForm({
                                         size="icon"
                                         className="h-6 w-6 rounded-full"
                                     >
-                                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                                        <Info className="text-muted-foreground h-3.5 w-3.5" />
                                         <span className="sr-only">Help</span>
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-80">
                                     <div className="space-y-4">
-                                        <h4 className="font-medium leading-none">
+                                        <h4 className="leading-none font-medium">
                                             Pitch Guidance
                                         </h4>
-                                        <div className="grid gap-4 text-xs text-muted-foreground">
+                                        <div className="text-muted-foreground grid gap-4 text-xs">
                                             <div className="grid gap-1">
-                                                <p className="font-medium text-foreground">
+                                                <p className="text-foreground font-medium">
                                                     From Concept to Creation
                                                 </p>
                                                 <p>
@@ -90,7 +90,7 @@ export function StoryBasicsForm({
                                                 </p>
                                             </div>
                                             <div className="grid gap-1">
-                                                <p className="font-medium text-foreground">
+                                                <p className="text-foreground font-medium">
                                                     Detail Matters
                                                 </p>
                                                 <p>
@@ -101,7 +101,7 @@ export function StoryBasicsForm({
                                                 </p>
                                             </div>
                                             <div className="grid gap-1 pt-1">
-                                                <p className="font-medium text-foreground">
+                                                <p className="text-foreground font-medium">
                                                     What you can specify
                                                 </p>
                                                 <ul className="list-inside list-disc space-y-1">
@@ -124,7 +124,7 @@ export function StoryBasicsForm({
                                 </PopoverContent>
                             </Popover>
                         </div>
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        <span className="text-muted-foreground text-[10px] tracking-wider uppercase">
                             {pitch.length} Characters
                         </span>
                     </div>

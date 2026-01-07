@@ -76,7 +76,7 @@ export const CharacterCard = memo(function CharacterCard({
 
     const renderExtraDisplay = useCallback(
         (entity: Character) => (
-            <p className="whitespace-pre-wrap rounded-lg border border-transparent p-4 transition-colors group-hover:border-gray-200">
+            <p className="rounded-lg border border-transparent p-4 whitespace-pre-wrap transition-colors group-hover:border-gray-200">
                 Voice: {entity.voice}
             </p>
         ),

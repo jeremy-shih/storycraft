@@ -75,7 +75,7 @@ export const CreateTab = React.memo(function CreateTab() {
             />
 
             {errorMessage && (
-                <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-6 text-destructive shadow-sm animate-in fade-in slide-in-from-top-4">
+                <div className="border-destructive/50 bg-destructive/10 text-destructive animate-in fade-in slide-in-from-top-4 mt-4 rounded-xl border p-6 shadow-sm">
                     {errorMessage}
                 </div>
             )}

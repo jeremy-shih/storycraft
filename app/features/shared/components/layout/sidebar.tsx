@@ -108,11 +108,11 @@ export const Sidebar = memo(function Sidebar() {
     return (
         <aside
             className={cn(
-                "fixed bottom-0 left-0 top-0 z-30 flex h-screen flex-shrink-0 flex-col border-r border-border bg-card/50 transition-all duration-300 ease-in-out",
+                "border-border bg-card/50 fixed top-0 bottom-0 left-0 z-30 flex h-screen flex-shrink-0 flex-col border-r transition-all duration-300 ease-in-out",
                 isCollapsed ? "w-[70px]" : "w-[280px]",
             )}
         >
-            <div className="flex h-16 items-center border-border px-3 transition-all duration-300">
+            <div className="border-border flex h-16 items-center px-3 transition-all duration-300">
                 {/* Toggle Button - Centered in Rail (46px zone) */}
                 <div className="flex w-[46px] shrink-0 justify-center">
                     <Button
@@ -133,7 +133,7 @@ export const Sidebar = memo(function Sidebar() {
                 <Button
                     onClick={handleCreateNewStory}
                     className={cn(
-                        "h-12 w-full justify-start overflow-hidden rounded-2xl bg-primary p-0 text-primary-foreground shadow-sm transition-all duration-300 hover:bg-primary/90",
+                        "bg-primary text-primary-foreground hover:bg-primary/90 h-12 w-full justify-start overflow-hidden rounded-2xl p-0 shadow-sm transition-all duration-300",
                     )}
                     title="New Story"
                 >
@@ -154,7 +154,7 @@ export const Sidebar = memo(function Sidebar() {
                 </Button>
             </div>
 
-            <div className="scrollbar-hide flex-1 space-y-1 overflow-y-auto overflow-x-hidden px-3">
+            <div className="scrollbar-hide flex-1 space-y-1 overflow-x-hidden overflow-y-auto px-3">
                 <div className="mb-2">
                     <button
                         onClick={() => setActiveTab("stories")}
@@ -184,7 +184,7 @@ export const Sidebar = memo(function Sidebar() {
 
                 <div
                     className={cn(
-                        "flex h-8 items-center overflow-hidden whitespace-nowrap text-xs font-medium uppercase tracking-wider text-muted-foreground transition-all duration-300",
+                        "text-muted-foreground flex h-8 items-center overflow-hidden text-xs font-medium tracking-wider whitespace-nowrap uppercase transition-all duration-300",
                         isCollapsed
                             ? "w-0 opacity-0"
                             : "w-full px-2 opacity-100",
@@ -198,13 +198,13 @@ export const Sidebar = memo(function Sidebar() {
                         {[1, 2, 3].map((i) => (
                             <div
                                 key={i}
-                                className="h-12 w-full animate-pulse rounded-full bg-muted/50"
+                                className="bg-muted/50 h-12 w-full animate-pulse rounded-full"
                             />
                         ))}
                     </div>
                 ) : scenarios.length === 0 ? (
                     !isCollapsed && (
-                        <div className="whitespace-nowrap px-2 text-sm text-muted-foreground">
+                        <div className="text-muted-foreground px-2 text-sm whitespace-nowrap">
                             No stories yet.
                         </div>
                     )
@@ -242,12 +242,12 @@ export const Sidebar = memo(function Sidebar() {
                 )}
             </div>
 
-            <div className="overflow-hidden border-t border-border p-2">
+            <div className="border-border overflow-hidden border-t p-2">
                 <Dialog>
                     <DialogTrigger asChild>
                         <button
                             className={cn(
-                                "mb-2 flex h-12 w-full items-center overflow-hidden rounded-full text-foreground transition-all duration-200 hover:bg-muted",
+                                "text-foreground hover:bg-muted mb-2 flex h-12 w-full items-center overflow-hidden rounded-full transition-all duration-200",
                             )}
                             title="Settings"
                         >
@@ -378,7 +378,7 @@ export const Sidebar = memo(function Sidebar() {
 
                 <p
                     className={cn(
-                        "whitespace-nowrap pt-2 text-xs text-muted-foreground",
+                        "text-muted-foreground pt-2 text-xs whitespace-nowrap",
                         // Use transition-none to hide instantly on collapse
                         isCollapsed
                             ? "h-0 w-0 opacity-0 transition-none"

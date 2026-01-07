@@ -77,8 +77,8 @@ export const SceneCard = memo(function SceneCard({
     return (
         <div
             className={cn(
-                "group relative rounded-[20px] border border-border/10 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md",
-                isDragOver && "bg-primary/5 ring-2 ring-primary",
+                "group border-border/10 bg-card relative rounded-[20px] border shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md",
+                isDragOver && "bg-primary/5 ring-primary ring-2",
             )}
             draggable
             onDragStart={onDragStart}
@@ -88,9 +88,9 @@ export const SceneCard = memo(function SceneCard({
         >
             {/* Helper for Dragging - only visible on hover */}
             {!hideControls && (
-                <div className="absolute left-3 top-3 z-20 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute top-3 left-3 z-20 opacity-0 transition-opacity group-hover:opacity-100">
                     <div
-                        className="cursor-grab rounded-full bg-black/40 p-2 text-white backdrop-blur-md hover:bg-primary/80 active:cursor-grabbing"
+                        className="hover:bg-primary/80 cursor-grab rounded-full bg-black/40 p-2 text-white backdrop-blur-md active:cursor-grabbing"
                         title="Drag to reorder"
                         onMouseDown={(e) => e.stopPropagation()}
                         role="button"
@@ -103,7 +103,7 @@ export const SceneCard = memo(function SceneCard({
             )}
 
             {/* Media Area */}
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-[20px] bg-muted/20">
+            <div className="bg-muted/20 relative aspect-[16/9] w-full overflow-hidden rounded-t-[20px]">
                 {isGenerating && (
                     <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                         <Loader2 className="h-8 w-8 animate-spin text-white" />
@@ -169,7 +169,7 @@ export const SceneCard = memo(function SceneCard({
                             <Button
                                 size="icon"
                                 variant="secondary"
-                                className="h-8 w-8 rounded-full border-0 bg-primary/80 text-white shadow-sm hover:bg-primary"
+                                className="bg-primary/80 hover:bg-primary h-8 w-8 rounded-full border-0 text-white shadow-sm"
                                 onClick={onGenerateVideo}
                                 disabled={isGenerating}
                                 title="Generate Video"
@@ -205,14 +205,14 @@ export const SceneCard = memo(function SceneCard({
             {/* Content Area */}
             <div className="p-5">
                 <div className="mb-3 flex items-center justify-between">
-                    <span className="rounded-full bg-secondary/30 px-3 py-1 text-sm font-bold text-foreground text-secondary-foreground">
+                    <span className="bg-secondary/30 text-foreground text-secondary-foreground rounded-full px-3 py-1 text-sm font-bold">
                         Scene {sceneNumber}
                     </span>
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsEditModalOpen(true)}
-                        className="rounded-full px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                        className="text-muted-foreground hover:bg-primary/5 hover:text-primary rounded-full px-3"
                     >
                         <Pencil className="mr-2 h-3.5 w-3.5" />
                         Edit
@@ -225,7 +225,7 @@ export const SceneCard = memo(function SceneCard({
                     </div>
                 )}
 
-                <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
                     {scene.description}
                 </p>
             </div>

@@ -19,9 +19,9 @@ export function FormatSelector({
     setAspectRatio,
 }: FormatSelectorProps) {
     return (
-        <Card className="flex-1 border border-border shadow-none">
-            <CardHeader className="flex flex-row items-center space-x-2 space-y-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Card className="border-border flex-1 border shadow-none">
+            <CardHeader className="flex flex-row items-center space-y-0 space-x-2">
+                <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
                     <div className="h-4 w-4 rounded border-2 border-current" />
                 </div>
                 <CardTitle className="text-lg">Format</CardTitle>

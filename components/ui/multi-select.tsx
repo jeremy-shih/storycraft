@@ -67,7 +67,7 @@ export function MultiSelect({
                                 <Badge
                                     variant="secondary"
                                     key={item}
-                                    className="mb-1 mr-1"
+                                    className="mr-1 mb-1"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -82,7 +82,7 @@ export function MultiSelect({
                                     <div
                                         role="button"
                                         tabIndex={0}
-                                        className="ml-1 cursor-pointer rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                        className="ring-offset-background focus:ring-ring ml-1 cursor-pointer rounded-full outline-none focus:ring-2 focus:ring-offset-2"
                                         onKeyDown={(e) => {
                                             if (
                                                 e.key === "Enter" ||
@@ -102,12 +102,12 @@ export function MultiSelect({
                                             handleUnselect(item);
                                         }}
                                     >
-                                        <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                                        <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
                                     </div>
                                 </Badge>
                             ))
                         ) : (
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-muted-foreground text-sm">
                                 {placeholder}
                             </span>
                         )}
@@ -127,7 +127,7 @@ export function MultiSelect({
                             >
                                 <div
                                     className={cn(
-                                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                                        "border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border",
                                         selected.includes(option.value)
                                             ? "bg-primary text-primary-foreground"
                                             : "opacity-50 [&_svg]:invisible",

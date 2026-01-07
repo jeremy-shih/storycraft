@@ -238,7 +238,7 @@ export function LoadingMessages({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.5 }}
-                        className="max-w-[500px] text-sm italic text-muted-foreground"
+                        className="text-muted-foreground max-w-[500px] text-sm italic"
                     >
                         {messages[currentMessageIndex]}
                     </motion.p>

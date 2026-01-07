@@ -96,14 +96,14 @@ export const TimelineEditor = memo(function TimelineEditor({
                     !isDragging && !isResizing ? handleTimelineClick : undefined
                 }
             >
-                <div className="relative pb-4 pt-4">
+                <div className="relative pt-4 pb-4">
                     <TimelineMarkers />
                     <TimelinePlayhead currentTime={currentTime} />
 
                     {/* Snap indicator line */}
                     {snapLinePosition !== null && (
                         <div
-                            className="pointer-events-none absolute bottom-0 top-0 z-20 w-0.5 bg-blue-500"
+                            className="pointer-events-none absolute top-0 bottom-0 z-20 w-0.5 bg-blue-500"
                             style={{
                                 left: `${(snapLinePosition / TIMELINE_DURATION) * 100}%`,
                                 height: "100%",

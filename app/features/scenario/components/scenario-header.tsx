@@ -30,7 +30,7 @@ export const ScenarioHeader = memo(function ScenarioHeader({
                     size="lg"
                     onClick={onGenerateStoryboard}
                     disabled={isLoading}
-                    className="rounded-2xl bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl shadow-sm"
                 >
                     {isLoading ? (
                         <>

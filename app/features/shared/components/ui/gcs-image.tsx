@@ -73,7 +73,7 @@ export const GcsImage = memo(function GcsImage({
     if (!imageUrl) {
         return (
             <div
-                className={`relative h-full w-full overflow-hidden bg-muted ${className}`}
+                className={`bg-muted relative h-full w-full overflow-hidden ${className}`}
             >
                 <Image
                     src="/placeholder.svg"

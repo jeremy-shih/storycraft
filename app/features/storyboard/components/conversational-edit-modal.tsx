@@ -102,7 +102,7 @@ export function ConversationalEditModal({
                             </div>
                         )}
                         {isEditing && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                            <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black">
                                 <Loader2 className="h-8 w-8 animate-spin text-white" />
                             </div>
                         )}

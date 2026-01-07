@@ -6,7 +6,7 @@ import { useSnapPoints } from "./use-snap-points";
 interface UseTimelineInteractionsProps {
     layers: TimelineLayer[];
     setLayers: React.Dispatch<React.SetStateAction<TimelineLayer[]>>;
-    timelineRef: React.RefObject<HTMLDivElement>;
+    timelineRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export function useTimelineInteractions({

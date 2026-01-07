@@ -124,7 +124,7 @@ export const EntityCard = memo(function EntityCard<T extends Entity>({
 
     return (
         <div
-            className={`relative flex flex-col items-start gap-6 rounded-xl border p-6 transition-all md:flex-row ${isEditing ? "bg-accent/5 shadow-lg ring-1 ring-accent/20" : "bg-card hover:shadow-md"}`}
+            className={`relative flex flex-col items-start gap-6 rounded-xl border p-6 transition-all md:flex-row ${isEditing ? "bg-accent/5 ring-accent/20 shadow-lg ring-1" : "bg-card hover:shadow-md"}`}
         >
             {isDeleting && (
                 <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-black/40 backdrop-blur-sm">
@@ -132,7 +132,7 @@ export const EntityCard = memo(function EntityCard<T extends Entity>({
                 </div>
             )}
             <div className="w-full flex-shrink-0 space-y-4 md:w-[200px]">
-                <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted shadow-sm">
+                <div className="bg-muted relative aspect-square w-full overflow-hidden rounded-lg shadow-sm">
                     {isLoading && !isDeleting && (
                         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-sm">
                             <Loader2 className="h-8 w-8 animate-spin text-white" />
@@ -161,7 +161,7 @@ export const EntityCard = memo(function EntityCard<T extends Entity>({
                         {isEditing ? (
                             <div className="space-y-4">
                                 <div>
-                                    <label className="mb-1.5 block text-sm font-semibold text-muted-foreground">
+                                    <label className="text-muted-foreground mb-1.5 block text-sm font-semibold">
                                         {title} Name
                                     </label>
                                     <Input
@@ -178,7 +178,7 @@ export const EntityCard = memo(function EntityCard<T extends Entity>({
                                     />
                                 </div>
                                 <div>
-                                    <label className="mb-1.5 block text-sm font-semibold text-muted-foreground">
+                                    <label className="text-muted-foreground mb-1.5 block text-sm font-semibold">
                                         {title} Description
                                     </label>
                                     <Textarea
@@ -220,8 +220,8 @@ export const EntityCard = memo(function EntityCard<T extends Entity>({
                                         Edit
                                     </Button>
                                 </div>
-                                <div className="prose prose-sm max-w-none rounded-lg border border-transparent bg-muted/30 p-4 text-muted-foreground transition-colors hover:border-border/50">
-                                    <p className="whitespace-pre-wrap leading-relaxed">
+                                <div className="prose prose-sm bg-muted/30 text-muted-foreground hover:border-border/50 max-w-none rounded-lg border border-transparent p-4 transition-colors">
+                                    <p className="leading-relaxed whitespace-pre-wrap">
                                         {entity.description}
                                     </p>
                                 </div>

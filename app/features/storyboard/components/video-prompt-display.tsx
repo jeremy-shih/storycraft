@@ -11,19 +11,19 @@ export function VideoPromptDisplay({
         <div className="space-y-3">
             <div>
                 <span className="text-xs font-medium">Action:</span>
-                <p className="text-sm text-card-foreground/80">
+                <p className="text-card-foreground/80 text-sm">
                     {videoPrompt.Action}
                 </p>
             </div>
             <div>
                 <span className="text-xs font-medium">Camera Motion:</span>
-                <p className="text-sm text-card-foreground/80">
+                <p className="text-card-foreground/80 text-sm">
                     {videoPrompt.Camera_Motion}
                 </p>
             </div>
             <div>
                 <span className="text-xs font-medium">Ambiance Audio:</span>
-                <p className="text-sm text-card-foreground/80">
+                <p className="text-card-foreground/80 text-sm">
                     {videoPrompt.Ambiance_Audio}
                 </p>
             </div>
@@ -33,7 +33,7 @@ export function VideoPromptDisplay({
                     {videoPrompt.Dialogue.map((dialogue, index) => (
                         <p
                             key={index}
-                            className="ml-2 text-sm text-card-foreground/80"
+                            className="text-card-foreground/80 ml-2 text-sm"
                         >
                             • {dialogue.speaker}: &quot;{dialogue.line}&quot;
                         </p>

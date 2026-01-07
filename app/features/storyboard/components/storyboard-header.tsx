@@ -59,7 +59,7 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                         disabled={
                             isVideoLoading || !hasScenes || isAnySceneGenerating
                         }
-                        className="rounded-2xl bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl shadow-sm"
                     >
                         {isVideoLoading ? (
                             <>
@@ -83,7 +83,7 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                         size="icon"
                         onClick={() => setViewMode("grid")}
                         className={cn(
-                            "h-8 w-8 border-0 hover:bg-accent hover:text-accent-foreground",
+                            "hover:bg-accent hover:text-accent-foreground h-8 w-8 border-0",
                             viewMode === "grid" &&
                                 "bg-accent text-accent-foreground",
                         )}
@@ -97,7 +97,7 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                         size="icon"
                         onClick={() => setViewMode("list")}
                         className={cn(
-                            "h-8 w-8 border-0 hover:bg-accent hover:text-accent-foreground",
+                            "hover:bg-accent hover:text-accent-foreground h-8 w-8 border-0",
                             viewMode === "list" &&
                                 "bg-accent text-accent-foreground",
                         )}
@@ -111,7 +111,7 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                         size="icon"
                         onClick={() => setViewMode("slideshow")}
                         className={cn(
-                            "h-8 w-8 border-0 hover:bg-accent hover:text-accent-foreground",
+                            "hover:bg-accent hover:text-accent-foreground h-8 w-8 border-0",
                             viewMode === "slideshow" &&
                                 "bg-accent text-accent-foreground",
                         )}
@@ -123,9 +123,9 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                 </div>
 
                 <div className="ml-2 flex items-center gap-2">
-                    <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                    <ImageIcon className="text-muted-foreground h-4 w-4" />
                     <div
-                        className="relative h-5 w-8 cursor-pointer rounded-full bg-muted"
+                        className="bg-muted relative h-5 w-8 cursor-pointer rounded-full"
                         onClick={() =>
                             setDisplayMode(
                                 displayMode === "image" ? "video" : "image",
@@ -134,14 +134,14 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                     >
                         <div
                             className={cn(
-                                "absolute top-0.5 h-4 w-4 rounded-full bg-primary transition-transform duration-200",
+                                "bg-primary absolute top-0.5 h-4 w-4 rounded-full transition-transform duration-200",
                                 displayMode === "video"
                                     ? "translate-x-3.5"
                                     : "translate-x-0.5",
                             )}
                         />
                     </div>
-                    <Video className="h-4 w-4 text-muted-foreground" />
+                    <Video className="text-muted-foreground h-4 w-4" />
                 </div>
             </div>
         </div>

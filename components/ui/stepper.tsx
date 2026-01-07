@@ -27,7 +27,7 @@ export function Stepper({
     return (
         <ol
             className={cn(
-                "flex w-full items-center text-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:text-base",
+                "flex w-full items-center text-center text-sm font-medium text-gray-500 sm:text-base dark:text-gray-400",
                 className,
             )}
             {...props}
@@ -50,14 +50,14 @@ export function Stepper({
                                 ? "cursor-not-allowed opacity-50"
                                 : "cursor-pointer",
                             index < steps.length - 1
-                                ? "after:mx-6 after:hidden after:h-[2px] after:w-full after:border-b-2 after:border-solid after:border-gray-300 after:content-[''] dark:after:border-gray-600 sm:after:inline-block xl:after:mx-10"
+                                ? "after:mx-6 after:hidden after:h-[2px] after:w-full after:border-b-2 after:border-solid after:border-gray-300 after:content-[''] sm:after:inline-block xl:after:mx-10 dark:after:border-gray-600"
                                 : "",
                         )}
                         onClick={() => !step.disabled && onStepClick?.(step.id)}
                     >
                         <div
                             className={cn(
-                                "relative z-10 flex items-center bg-background px-2",
+                                "bg-background relative z-10 flex items-center px-2",
                                 step.disabled
                                     ? "cursor-not-allowed"
                                     : "cursor-pointer",

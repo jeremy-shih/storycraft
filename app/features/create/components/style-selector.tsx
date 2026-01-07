@@ -212,7 +212,7 @@ export function StyleSelector({
                                     className="min-h-[100px] resize-none"
                                 />
                                 {isAnalyzing && (
-                                    <div className="absolute bottom-2 right-2">
+                                    <div className="absolute right-2 bottom-2">
                                         <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
                                     </div>
                                 )}
@@ -239,7 +239,7 @@ export function StyleSelector({
                                         <Button
                                             variant="destructive"
                                             size="icon"
-                                            className="absolute right-2 top-2 h-6 w-6"
+                                            className="absolute top-2 right-2 h-6 w-6"
                                             onClick={() =>
                                                 onStyleImageUpload(null)
                                             }
@@ -248,7 +248,7 @@ export function StyleSelector({
                                         </Button>
                                     </div>
                                 ) : (
-                                    <Label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border p-6 transition-colors hover:border-[#0EA5E9]/50 hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                                    <Label className="border-border flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors hover:border-[#0EA5E9]/50 hover:bg-zinc-50 dark:hover:bg-zinc-900">
                                         {isUploading ? (
                                             <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
                                         ) : (

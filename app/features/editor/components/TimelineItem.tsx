@@ -45,7 +45,7 @@ export const TimelineItem = memo(function TimelineItem({
 
     return (
         <div
-            className={`group absolute bottom-1 top-1 overflow-hidden rounded ${isDragging || isBeingPushed ? "" : "transition-shadow"} ${isSelected ? "ring-2 ring-blue-500 ring-offset-1" : ""} ${isBeingDragged ? "z-20 shadow-xl ring-2 ring-blue-400" : ""} ${isBeingPushed ? "z-10 ring-2 ring-amber-400 ring-offset-1" : ""} ${isBeingResized ? "z-20" : ""} ${!isDragging && !isResizing ? "cursor-grab hover:shadow-md" : ""}`}
+            className={`group absolute top-1 bottom-1 overflow-hidden rounded ${isDragging || isBeingPushed ? "" : "transition-shadow"} ${isSelected ? "ring-2 ring-blue-500 ring-offset-1" : ""} ${isBeingDragged ? "z-20 shadow-xl ring-2 ring-blue-400" : ""} ${isBeingPushed ? "z-10 ring-2 ring-amber-400 ring-offset-1" : ""} ${isBeingResized ? "z-20" : ""} ${!isDragging && !isResizing ? "cursor-grab hover:shadow-md" : ""}`}
             style={{
                 left: `${((item.startTime + paddingTime / 2) / TIMELINE_DURATION) * 100}%`,
                 width: `calc(${(item.duration / TIMELINE_DURATION) * 100}% - ${CLIP_PADDING * 2}px)`,
@@ -92,7 +92,7 @@ export const TimelineItem = memo(function TimelineItem({
                             e.stopPropagation();
                             onRemove();
                         }}
-                        className="absolute right-0 top-0 h-6 w-6 bg-red-500 p-0 text-white opacity-0 transition-opacity hover:bg-red-600 group-hover:opacity-100"
+                        className="absolute top-0 right-0 h-6 w-6 bg-red-500 p-0 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
                         title={`Remove ${layer.type}`}
                     >
                         <X className="h-3 w-3" />
@@ -110,16 +110,16 @@ export const TimelineItem = memo(function TimelineItem({
 
             {/* Resize handles */}
             <div
-                className="resize-handle absolute bottom-0 left-0 top-0 z-10 w-2 cursor-ew-resize bg-gradient-to-r from-blue-500/60 to-transparent opacity-0 transition-opacity hover:from-blue-500 hover:!opacity-100 group-hover:opacity-100"
+                className="resize-handle absolute top-0 bottom-0 left-0 z-10 w-2 cursor-ew-resize bg-gradient-to-r from-blue-500/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100 hover:from-blue-500 hover:!opacity-100"
                 onMouseDown={(e) => onResizeStart(e, "start")}
             >
-                <div className="absolute left-0.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-white shadow" />
+                <div className="absolute top-1/2 left-0.5 h-4 w-0.5 -translate-y-1/2 rounded-full bg-white shadow" />
             </div>
             <div
-                className="resize-handle absolute bottom-0 right-0 top-0 z-10 w-2 cursor-ew-resize bg-gradient-to-l from-blue-500/60 to-transparent opacity-0 transition-opacity hover:from-blue-500 hover:!opacity-100 group-hover:opacity-100"
+                className="resize-handle absolute top-0 right-0 bottom-0 z-10 w-2 cursor-ew-resize bg-gradient-to-l from-blue-500/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100 hover:from-blue-500 hover:!opacity-100"
                 onMouseDown={(e) => onResizeStart(e, "end")}
             >
-                <div className="absolute right-0.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-white shadow" />
+                <div className="absolute top-1/2 right-0.5 h-4 w-0.5 -translate-y-1/2 rounded-full bg-white shadow" />
             </div>
         </div>
     );

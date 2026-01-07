@@ -273,7 +273,7 @@ export function EditSceneModal({
                 <div className="grid grid-cols-1 gap-6 py-4 lg:grid-cols-3">
                     {/* Left side - Image/Video */}
                     <div className="space-y-4">
-                        <div className="relative h-[300px] w-full overflow-hidden rounded-lg bg-muted">
+                        <div className="bg-muted relative h-[300px] w-full overflow-hidden rounded-lg">
                             {displayMode === "video" && scene.videoUri ? (
                                 <div className="absolute inset-0">
                                     <VideoPlayer
@@ -295,7 +295,7 @@ export function EditSceneModal({
                     {/* Right side - Tabbed Scene Parameters */}
                     <div className="lg:col-span-2">
                         {/* Custom Tab Navigation */}
-                        <div className="mb-6 flex border-b border-border">
+                        <div className="border-border mb-6 flex border-b">
                             <div
                                 role="tab"
                                 tabIndex={0}
@@ -306,10 +306,10 @@ export function EditSceneModal({
                                         setActiveTab("general");
                                     }
                                 }}
-                                className={`cursor-pointer select-none border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                className={`cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors select-none ${
                                     activeTab === "general"
                                         ? "border-primary text-primary"
-                                        : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                                        : "text-muted-foreground hover:border-border hover:text-foreground border-transparent"
                                 }`}
                             >
                                 General
@@ -324,10 +324,10 @@ export function EditSceneModal({
                                         setActiveTab("image");
                                     }
                                 }}
-                                className={`cursor-pointer select-none border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                className={`cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors select-none ${
                                     activeTab === "image"
                                         ? "border-primary text-primary"
-                                        : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                                        : "text-muted-foreground hover:border-border hover:text-foreground border-transparent"
                                 }`}
                             >
                                 Image Prompt
@@ -342,10 +342,10 @@ export function EditSceneModal({
                                         setActiveTab("video");
                                     }
                                 }}
-                                className={`cursor-pointer select-none border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                                className={`cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors select-none ${
                                     activeTab === "video"
                                         ? "border-primary text-primary"
-                                        : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                                        : "text-muted-foreground hover:border-border hover:text-foreground border-transparent"
                                 }`}
                             >
                                 Video Prompt
@@ -449,7 +449,7 @@ export function EditSceneModal({
                                         </label>
                                         <div className="ml-4 grid grid-cols-1 gap-3 md:grid-cols-3">
                                             <div>
-                                                <label className="text-xs text-muted-foreground">
+                                                <label className="text-muted-foreground text-xs">
                                                     Shot Type
                                                 </label>
                                                 <Input
@@ -468,7 +468,7 @@ export function EditSceneModal({
                                                 />
                                             </div>
                                             <div>
-                                                <label className="text-xs text-muted-foreground">
+                                                <label className="text-muted-foreground text-xs">
                                                     Lighting
                                                 </label>
                                                 <Input
@@ -487,7 +487,7 @@ export function EditSceneModal({
                                                 />
                                             </div>
                                             <div>
-                                                <label className="text-xs text-muted-foreground">
+                                                <label className="text-muted-foreground text-xs">
                                                     Overall Mood
                                                 </label>
                                                 <Input

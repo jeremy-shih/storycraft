@@ -23,7 +23,7 @@ export function Slider({
     return (
         <div
             className={cn(
-                "relative flex w-full touch-none select-none items-center",
+                "relative flex w-full touch-none items-center select-none",
                 className,
             )}
         >

@@ -89,7 +89,7 @@ export const StoryboardTab = React.memo(function StoryboardTab() {
             {renderScenes()}
 
             {errorMessage && (
-                <div className="mt-4 whitespace-pre-wrap rounded border border-red-400 bg-red-100 p-4 text-red-700">
+                <div className="mt-4 rounded border border-red-400 bg-red-100 p-4 whitespace-pre-wrap text-red-700">
                     {errorMessage}
                 </div>
             )}

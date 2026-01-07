@@ -135,7 +135,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex h-screen overflow-hidden bg-background font-sans">
+        <div className="bg-background flex h-screen overflow-hidden font-sans">
             {/* Left Sidebar */}
             <Sidebar />
 
@@ -144,9 +144,9 @@ export default function Home() {
                 className={`flex flex-1 flex-col transition-all duration-300 ${isSidebarCollapsed ? "ml-[70px]" : "ml-[280px]"}`}
             >
                 {/* Top Navigation Bar */}
-                <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/50 px-6 backdrop-blur-sm">
+                <header className="border-border bg-card/50 sticky top-0 z-20 flex h-16 items-center justify-between border-b px-6 backdrop-blur-sm">
                     <div className="flex w-1/3 items-center gap-4">
-                        <div className="flex items-center gap-2 text-xl font-bold text-primary">
+                        <div className="text-primary flex items-center gap-2 text-xl font-bold">
                             <Image
                                 src="/logo6.png"
                                 alt="StoryCraft Logo"
@@ -169,7 +169,7 @@ export default function Home() {
                 </header>
 
                 {/* Content Body */}
-                <div className="flex-1 overflow-y-auto bg-muted/30 p-6">
+                <div className="bg-muted/30 flex-1 overflow-y-auto p-6">
                     <div className="mx-auto max-w-7xl space-y-6">
                         {activeTab === "create" && <CreateTab />}
 
@@ -191,7 +191,7 @@ export default function Home() {
                         {!scenario &&
                             activeTab !== "create" &&
                             activeTab !== "stories" && (
-                                <div className="flex h-[50vh] flex-col items-center justify-center text-muted-foreground">
+                                <div className="text-muted-foreground flex h-[50vh] flex-col items-center justify-center">
                                     <BookOpen className="mb-4 h-12 w-12 opacity-50" />
                                     <p className="text-lg font-medium">
                                         Select a story from the sidebar or
