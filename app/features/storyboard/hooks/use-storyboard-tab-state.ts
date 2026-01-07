@@ -67,8 +67,12 @@ export function useStoryboardTabState() {
 
     const isAnySceneGenerating = generatingScenes.size > 0;
 
+    const safeScenario = scenario
+        ? { ...scenario, scenes: scenario.scenes || [] }
+        : undefined;
+
     return {
-        scenario,
+        scenario: safeScenario,
         errorMessage,
         isVideoLoading,
         generatingScenes,

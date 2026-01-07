@@ -24,7 +24,7 @@ export function useStoryboardActions() {
     const { uploadImageFile } = useImageUpload();
 
     const handleRegenerateImage = async (index: number) => {
-        if (!scenario) return;
+        if (!scenario || !scenario.scenes) return;
 
         startLoading("scenes", index);
         setErrorMessage(null);
@@ -87,7 +87,7 @@ export function useStoryboardActions() {
                 ? generateAudio
                 : settings.generateAudio;
 
-        if (!scenario) return;
+        if (!scenario || !scenario.scenes) return;
         setErrorMessage(null);
         setLoading("video", true);
         clientLogger.log("[Client] Generating videos for all scenes - START");
@@ -174,7 +174,7 @@ export function useStoryboardActions() {
     };
 
     const handleGenerateVideo = async (index: number) => {
-        if (!scenario) return;
+        if (!scenario || !scenario.scenes) return;
         setErrorMessage(null);
         startLoading("scenes", index);
         try {
@@ -254,7 +254,7 @@ export function useStoryboardActions() {
     };
 
     const handleUpdateScene = (index: number, updatedScene: Scene) => {
-        if (!scenario) return;
+        if (!scenario || !scenario.scenes) return;
 
         const newScenes = [...scenario.scenes];
         newScenes[index] = updatedScene;
@@ -266,7 +266,7 @@ export function useStoryboardActions() {
     };
 
     const handleUploadImage = async (index: number, file: File) => {
-        if (!scenario) return;
+        if (!scenario || !scenario.scenes) return;
 
         setErrorMessage(null);
         startLoading("scenes", index);
@@ -325,7 +325,7 @@ export function useStoryboardActions() {
     };
 
     const handleAddScene = () => {
-        if (!scenario) return;
+        if (!scenario || !scenario.scenes) return;
 
         const newScene = createEmptyScene();
         const updatedScenes = [...scenario.scenes, newScene];
@@ -337,7 +337,8 @@ export function useStoryboardActions() {
     };
 
     const handleRemoveScene = (index: number) => {
-        if (!scenario || scenario.scenes.length <= 1) return;
+        if (!scenario || !scenario.scenes || scenario.scenes.length <= 1)
+            return;
 
         const updatedScenes = scenario.scenes.filter((_, i) => i !== index);
         setScenario({
@@ -347,7 +348,7 @@ export function useStoryboardActions() {
     };
 
     const handleReorderScenes = (fromIndex: number, toIndex: number) => {
-        if (!scenario || fromIndex === toIndex) return;
+        if (!scenario || !scenario.scenes || fromIndex === toIndex) return;
 
         const updatedScenes = [...scenario.scenes];
         const [movedScene] = updatedScenes.splice(fromIndex, 1);

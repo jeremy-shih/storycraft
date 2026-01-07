@@ -80,6 +80,7 @@ export async function generateScenario(
                 pitch: pitch,
                 style: style,
                 props: parsedScenario.props || [],
+                scenes: [],
                 aspectRatio: aspectRatio,
                 durationSeconds: durationSeconds,
                 language: {

@@ -75,7 +75,15 @@ export const useScenarioStore = create<ScenarioState>()(
                     ),
 
                 setScenario: (scenario) =>
-                    set({ scenario }, false, "setScenario"),
+                    set(
+                        {
+                            scenario: scenario
+                                ? { ...scenario, scenes: scenario.scenes || [] }
+                                : undefined,
+                        },
+                        false,
+                        "setScenario",
+                    ),
 
                 setErrorMessage: (errorMessage) => {
                     set({ errorMessage }, false, "setErrorMessage");
