@@ -23,5 +23,3 @@
 - [x] Task: Write/update tests for `StyleSelector` to verify analysis triggering and UI states.
 
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Frontend Integration' (Protocol in workflow.md)
-
-

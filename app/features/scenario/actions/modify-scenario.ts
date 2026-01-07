@@ -21,9 +21,8 @@ import { DEFAULT_SETTINGS } from "@/lib/ai-config";
 import { requireAuth } from "@/lib/api/auth-utils";
 import { validateActionInput } from "@/lib/utils/validation";
 
-// ScenarioUpdateResult interface remains as it's specific to these actions
-export interface ScenarioUpdateResult {
-    updatedScenario: string;
+// UpdatedEntityResult interface for entity modifications
+export interface UpdatedEntityResult {
     updatedCharacter?: {
         name: string;
         description: string;
@@ -40,9 +39,13 @@ export interface ScenarioUpdateResult {
     newImageGcsUri?: string;
 }
 
-// Zod schema for character and scenario updates
-const CharacterScenarioUpdateSchema = z.object({
-    updatedScenario: z.string(),
+// DeletedEntityResult for when an entity is removed and scenario text is updated
+export interface DeletedEntityResult {
+    updatedScenario: string;
+}
+
+// Zod schema for character updates
+const CharacterUpdateSchema = z.object({
     updatedCharacter: z.object({
         name: z.string(),
         description: z.string(),
@@ -50,16 +53,14 @@ const CharacterScenarioUpdateSchema = z.object({
     }),
 });
 
-const SettingScenarioUpdateSchema = z.object({
-    updatedScenario: z.string(),
+const SettingUpdateSchema = z.object({
     updatedSetting: z.object({
         name: z.string(),
         description: z.string(),
     }),
 });
 
-const PropScenarioUpdateSchema = z.object({
-    updatedScenario: z.string(),
+const PropUpdateSchema = z.object({
     updatedProp: z.object({
         name: z.string(),
         description: z.string(),
@@ -84,7 +85,7 @@ const geminiConfig = {
 };
 
 // Shared function to update scenario text
-async function updateScenarioText(
+export async function updateScenarioTextAction(
     currentScenario: string,
     oldName: string,
     newName: string,
@@ -93,13 +94,12 @@ async function updateScenarioText(
     modelName: string = DEFAULT_SETTINGS.llmModel,
     thinkingBudget: number = DEFAULT_SETTINGS.thinkingBudget,
 ): Promise<string> {
+    await requireAuth();
     const text = await generateContent(
         `Update the following scenario to reflect ${entityType} changes. The ${entityType} previously named "${oldName}" is now named "${newName}" with the following updated description: "${newDescription}".
 
 CURRENT SCENARIO:
-"${currentScenario}"
-
-INSTRUCTIONS:
+"${currentScenario}"\n\nINSTRUCTIONS:
 1. Replace all references to "${oldName}" with "${newName}" (if the name changed)
 2. Update any ${entityType} descriptions in the scenario to match the new ${entityType} description
 3. Ensure the story flow and narrative remain coherent
@@ -130,9 +130,7 @@ async function deleteFromScenarioText(
         `Delete the following ${entityType} from the scenario.
 
 CURRENT SCENARIO:
-"${currentScenario}"
-
-INSTRUCTIONS:
+"${currentScenario}"\n\nINSTRUCTIONS:
 1. Delete all references to "${oldName}" and "${oldDescription}" from the scenario
 2. Ensure the story flow and narrative remain coherent
 3. Maintain the same tone and style as the original scenario
@@ -148,7 +146,7 @@ export async function deleteCharacterFromScenario(
     currentScenario: string,
     oldName: string,
     oldDescription: string,
-): Promise<ScenarioUpdateResult> {
+): Promise<DeletedEntityResult> {
     await requireAuth();
     try {
         validateActionInput(
@@ -181,7 +179,7 @@ export async function deleteSettingFromScenario(
     currentScenario: string,
     oldName: string,
     oldDescription: string,
-): Promise<ScenarioUpdateResult> {
+): Promise<DeletedEntityResult> {
     await requireAuth();
     try {
         validateActionInput(
@@ -213,7 +211,7 @@ export async function deletePropFromScenario(
     currentScenario: string,
     oldName: string,
     oldDescription: string,
-): Promise<ScenarioUpdateResult> {
+): Promise<DeletedEntityResult> {
     await requireAuth();
     try {
         validateActionInput(
@@ -242,36 +240,28 @@ export async function deletePropFromScenario(
 }
 
 /**
- * Regenerate character and scenario from text input
- * Creates a new character image and updates the scenario accordingly
+ * Regenerate character image only
  */
-export async function regenerateCharacterAndScenarioFromText(
+export async function regenerateCharacterImageAction(
     scenario: Scenario,
-    oldCharacterName: string,
     newCharacterName: string,
     newCharacterDescription: string,
-    style: string,
-    llmModel: string = DEFAULT_SETTINGS.llmModel,
-    thinkingBudget: number = DEFAULT_SETTINGS.thinkingBudget,
     imageModel: string = DEFAULT_SETTINGS.imageModel,
-): Promise<ScenarioUpdateResult> {
+): Promise<UpdatedEntityResult> {
     await requireAuth();
-    logger.info("regenerateCharacterAndScenarioFromText");
-    logger.debug("scenario :" + JSON.stringify(scenario, null, 2));
+    logger.info("regenerateCharacterImageAction");
     try {
         validateActionInput(
             {
                 currentScenario: scenario.scenario,
-                oldCharacterName,
-                newCharacterName,
-                newCharacterDescription,
-                style,
-                llmModel,
-                thinkingBudget,
+                oldCharacterName: newCharacterName,
+                newCharacterName: newCharacterName,
+                newCharacterDescription: newCharacterDescription,
+                style: scenario.style,
                 imageModel,
             },
             regenerateCharacterTextSchema,
-            "Validation error in regenerateCharacterAndScenarioFromText",
+            "Validation error in regenerateCharacterImageAction",
         );
 
         // Generate new character image
@@ -285,43 +275,29 @@ export async function regenerateCharacterAndScenarioFromText(
             modelName: imageModel,
         });
 
-        // Update scenario text
-        const updatedScenario = await updateScenarioText(
-            scenario.scenario,
-            oldCharacterName,
-            newCharacterName,
-            newCharacterDescription,
-            "character",
-            llmModel,
-            thinkingBudget,
-        );
-
         return {
-            updatedScenario,
             newImageGcsUri: imageResult.imageGcsUri,
         };
     } catch (error) {
-        handleError("regenerate character and scenario from text", error);
+        handleError("regenerate character image", error);
     }
     throw new Error("Unreachable code");
 }
 
 /**
- * Regenerate character and scenario from image analysis
- * Analyzes an existing character image and updates both character description and scenario
+ * Analyze character image and update description/voice, then regenerate image for style consistency
  */
-export async function regenerateCharacterAndScenarioFromImage(
+export async function syncCharacterFromImageAction(
     scenario: Scenario,
     characterName: string,
     currentCharacterDescription: string,
     currentCharacterVoice: string,
     imageGcsUri: string,
     allCharacters: Character[],
-    style: string,
     llmModel: string = DEFAULT_SETTINGS.llmModel,
     thinkingBudget: number = DEFAULT_SETTINGS.thinkingBudget,
     imageModel: string = DEFAULT_SETTINGS.imageModel,
-): Promise<ScenarioUpdateResult> {
+): Promise<UpdatedEntityResult> {
     await requireAuth();
     try {
         validateActionInput(
@@ -332,13 +308,13 @@ export async function regenerateCharacterAndScenarioFromImage(
                 currentCharacterVoice,
                 imageGcsUri,
                 allCharacters,
-                style,
+                style: scenario.style,
                 llmModel,
                 thinkingBudget,
                 imageModel,
             },
             regenerateCharacterImageSchema,
-            "Validation error in regenerateCharacterAndScenarioFromImage",
+            "Validation error in syncCharacterFromImageAction",
         );
 
         const characterListText = allCharacters
@@ -353,28 +329,19 @@ export async function regenerateCharacterAndScenarioFromImage(
                         mimeType: "image/png",
                     },
                 },
-                `Analyze the provided image and update both the character description and scenario text to match the visual characteristics shown.
-
-CURRENT SCENARIO:
-"${scenario.scenario}"
+                `Analyze the provided image and update the character description and voice to match the visual characteristics shown.
 
 ALL CHARACTERS IN THE STORY:
 ${characterListText}
 
 CHARACTER TO UPDATE (${characterName}):
-"Description: ${currentCharacterDescription}"
-"Voice: ${currentCharacterVoice}"
-
+"Description: ${currentCharacterDescription}"\n"Voice: ${currentCharacterVoice}"\n
 INSTRUCTIONS:
 1. Examine the uploaded image carefully
 2. Update ONLY the description and voice of ${characterName} to accurately reflect what you see in the image (appearance, clothing, features, etc.)
-3. Update any references to ${characterName} in the scenario text to maintain consistency with the new appearance
-4. PRESERVE ALL OTHER CHARACTERS - do not remove or modify descriptions of other characters
-5. Keep the story as a multi-character narrative - maintain all character interactions and plot elements
-6. Preserve the story narrative and flow, but ensure all descriptions of ${characterName} match the visual characteristics
-7. Keep the same tone and style as the original text
+3. Do NOT modify the scenario text.
 
-Return both the updated scenario (maintaining all characters) and the updated description for ${characterName}.`,
+Return a JSON object with updatedCharacter (name, description, voice).`,
             ],
             {
                 ...geminiConfig,
@@ -383,77 +350,67 @@ Return both the updated scenario (maintaining all characters) and the updated de
                     thinkingBudget,
                 },
                 responseMimeType: "application/json",
-                responseSchema: z.toJSONSchema(CharacterScenarioUpdateSchema),
+                responseSchema: z.toJSONSchema(CharacterUpdateSchema),
             },
             llmModel,
         );
 
-        const characterScenarioUpdateResult =
-            CharacterScenarioUpdateSchema.safeParse(JSON.parse(text!));
-        if (!characterScenarioUpdateResult.success) {
+        const characterUpdateResult = CharacterUpdateSchema.safeParse(
+            JSON.parse(text!),
+        );
+        if (!characterUpdateResult.success) {
             handleError(
                 "parse character scenario update",
-                characterScenarioUpdateResult.error,
+                characterUpdateResult.error,
             );
         }
-        const characterScenarioUpdate = characterScenarioUpdateResult.data!;
+        const characterUpdate = characterUpdateResult.data!;
 
+        // Regenerate image for style consistency
         const imageResult = await generateImageForScenario({
             scenario,
-            entity: {
-                name: characterScenarioUpdate.updatedCharacter.name,
-                description:
-                    characterScenarioUpdate.updatedCharacter.description,
-            },
+            entity: characterUpdate.updatedCharacter,
             entityType: "character",
             modelName: imageModel,
+            referenceImageGcsUri: imageGcsUri,
         });
 
         return {
-            updatedScenario: characterScenarioUpdate.updatedScenario,
-            updatedCharacter: characterScenarioUpdate.updatedCharacter,
+            updatedCharacter: characterUpdate.updatedCharacter,
             newImageGcsUri: imageResult.imageGcsUri,
         };
     } catch (error) {
-        handleError("regenerate character and scenario", error);
+        handleError("sync character from image", error);
     }
     throw new Error("Unreachable code");
 }
 
 /**
- * Regenerate scenario from setting changes
- * Updates scenario text to reflect setting modifications
+ * Regenerate setting image only
  */
-export async function regenerateSettingAndScenarioFromText(
+export async function regenerateSettingImageAction(
     scenario: Scenario,
-    oldSettingName: string,
     newSettingName: string,
     newSettingDescription: string,
-    style: string,
     aspectRatio: string = "16:9",
-    llmModel: string = DEFAULT_SETTINGS.llmModel,
-    thinkingBudget: number = DEFAULT_SETTINGS.thinkingBudget,
     imageModel: string = DEFAULT_SETTINGS.imageModel,
-): Promise<ScenarioUpdateResult> {
+): Promise<UpdatedEntityResult> {
     await requireAuth();
     try {
         validateActionInput(
             {
                 currentScenario: scenario.scenario,
-                oldSettingName,
-                newSettingName,
-                newSettingDescription,
-                style,
+                oldSettingName: newSettingName,
+                newSettingName: newSettingName,
+                newSettingDescription: newSettingDescription,
+                style: scenario.style,
                 aspectRatio,
-                llmModel,
-                thinkingBudget,
                 imageModel,
             },
             regenerateSettingTextSchema,
-            "Validation error in regenerateSettingAndScenarioFromText",
+            "Validation error in regenerateSettingImageAction",
         );
 
-        // Generate new setting image
         const imageResult = await generateImageForScenario({
             scenario,
             entity: {
@@ -465,106 +422,28 @@ export async function regenerateSettingAndScenarioFromText(
             aspectRatio,
         });
 
-        // Update scenario text
-        const updatedScenario = await updateScenarioText(
-            scenario.scenario,
-            oldSettingName,
-            newSettingName,
-            newSettingDescription,
-            "setting",
-            llmModel,
-            thinkingBudget,
-        );
-
-        logger.debug(updatedScenario);
-
         return {
-            updatedScenario,
             newImageGcsUri: imageResult.imageGcsUri,
         };
     } catch (error) {
-        handleError("regenerate scenario from setting", error);
+        handleError("regenerate setting image", error);
     }
     throw new Error("Unreachable code");
 }
 
 /**
- * Regenerate scenario from prop changes
- * Updates scenario text to reflect prop modifications
+ * Analyze setting image and regenerate for style consistency
  */
-export async function regeneratePropAndScenarioFromText(
-    scenario: Scenario,
-    oldPropName: string,
-    newPropName: string,
-    newPropDescription: string,
-    style: string,
-    llmModel: string = DEFAULT_SETTINGS.llmModel,
-    thinkingBudget: number = DEFAULT_SETTINGS.thinkingBudget,
-    imageModel: string = DEFAULT_SETTINGS.imageModel,
-): Promise<ScenarioUpdateResult> {
-    await requireAuth();
-    try {
-        validateActionInput(
-            {
-                currentScenario: scenario.scenario,
-                oldPropName,
-                newPropName,
-                newPropDescription,
-                style,
-                llmModel,
-                thinkingBudget,
-                imageModel,
-            },
-            regeneratePropTextSchema,
-            "Validation error in regeneratePropAndScenarioFromText",
-        );
-
-        // Generate new prop image
-        const imageResult = await generateImageForScenario({
-            scenario,
-            entity: { name: newPropName, description: newPropDescription },
-            entityType: "prop",
-            modelName: imageModel,
-        });
-
-        // Update scenario text
-        const updatedScenario = await updateScenarioText(
-            scenario.scenario,
-            oldPropName,
-            newPropName,
-            newPropDescription,
-            "prop",
-            llmModel,
-            thinkingBudget,
-        );
-
-        logger.debug(updatedScenario);
-
-        return {
-            updatedScenario,
-            newImageGcsUri: imageResult.imageGcsUri,
-        };
-    } catch (error) {
-        handleError("regenerate scenario from prop", error);
-    }
-    throw new Error("Unreachable code");
-}
-
-/**
- * Regenerate character and scenario from image analysis
- * Analyzes an existing character image and updates both character description and scenario
- */
-export async function regenerateSettingAndScenarioFromImage(
+export async function syncSettingFromImageAction(
     scenario: Scenario,
     settingName: string,
     currentSettingDescription: string,
     imageGcsUri: string,
     allSettings: Setting[],
-    style: string,
     llmModel: string = DEFAULT_SETTINGS.llmModel,
     thinkingBudget: number = DEFAULT_SETTINGS.thinkingBudget,
     imageModel: string = DEFAULT_SETTINGS.imageModel,
-): Promise<ScenarioUpdateResult> {
+): Promise<UpdatedEntityResult> {
     await requireAuth();
     try {
         validateActionInput(
@@ -574,13 +453,13 @@ export async function regenerateSettingAndScenarioFromImage(
                 currentSettingDescription,
                 imageGcsUri,
                 allSettings,
-                style,
+                style: scenario.style,
                 llmModel,
                 thinkingBudget,
                 imageModel,
             },
             regenerateSettingImageSchema,
-            "Validation error in regenerateSettingAndScenarioFromImage",
+            "Validation error in syncSettingFromImageAction",
         );
 
         const settingListText = allSettings
@@ -595,26 +474,19 @@ export async function regenerateSettingAndScenarioFromImage(
                         mimeType: "image/png",
                     },
                 },
-                `Analyze the provided image and update both the setting description and scenario text to match the visual characteristics shown.
-
-CURRENT SCENARIO:
-"${scenario.scenario}"
+                `Analyze the provided image and update the setting description to match the visual characteristics shown.
 
 ALL SETTINGS IN THE STORY:
 ${settingListText}
 
 SETTING TO UPDATE (${settingName}):
-"${currentSettingDescription}"
-
+"${currentSettingDescription}"\n
 INSTRUCTIONS:
 1. Examine the uploaded image carefully
 2. Update ONLY the description of ${settingName} to accurately reflect what you see in the image
-3. Update any references to ${settingName} in the scenario text to maintain consistency with the new setting
-4. PRESERVE ALL OTHER SETTINGS - do not remove or modify descriptions of other settings
-7. Preserve the story narrative and flow, but ensure all descriptions of ${settingName} match the visual characteristics
-8. Keep the same tone and style as the original text
+3. Do NOT modify the scenario text.
 
-Return both the updated scenario (maintaining all settings) and the updated description for ${settingName}.`,
+Return a JSON object with updatedSetting (name, description).`,
             ],
             {
                 ...geminiConfig,
@@ -623,57 +495,95 @@ Return both the updated scenario (maintaining all settings) and the updated desc
                     thinkingBudget,
                 },
                 responseMimeType: "application/json",
-                responseSchema: z.toJSONSchema(SettingScenarioUpdateSchema),
+                responseSchema: z.toJSONSchema(SettingUpdateSchema),
             },
             llmModel,
         );
 
-        const settingScenarioUpdateResult =
-            SettingScenarioUpdateSchema.safeParse(JSON.parse(text!));
-        if (!settingScenarioUpdateResult.success) {
+        const settingUpdateResult = SettingUpdateSchema.safeParse(
+            JSON.parse(text!),
+        );
+        if (!settingUpdateResult.success) {
             handleError(
                 "parse setting scenario update",
-                settingScenarioUpdateResult.error,
+                settingUpdateResult.error,
             );
         }
-        const settingScenarioUpdate = settingScenarioUpdateResult.data!;
+        const settingUpdate = settingUpdateResult.data!;
 
+        // Regenerate image for style consistency
         const imageResult = await generateImageForScenario({
             scenario,
-            entity: {
-                name: settingScenarioUpdate.updatedSetting.name,
-                description: settingScenarioUpdate.updatedSetting.description,
-            },
+            entity: settingUpdate.updatedSetting,
             entityType: "setting",
             modelName: imageModel,
+            aspectRatio: scenario.aspectRatio,
+            referenceImageGcsUri: imageGcsUri,
         });
 
         return {
-            updatedScenario: settingScenarioUpdate.updatedScenario,
-            updatedSetting: settingScenarioUpdate.updatedSetting,
+            updatedSetting: settingUpdate.updatedSetting,
             newImageGcsUri: imageResult.imageGcsUri,
         };
     } catch (error) {
-        handleError("regenerate setting and scenario", error);
+        handleError("sync setting from image", error);
     }
     throw new Error("Unreachable code");
 }
 
 /**
- * Regenerate character and scenario from image analysis
- * Analyzes an existing character image and updates both character description and scenario
+ * Regenerate prop image only
  */
-export async function regeneratePropAndScenarioFromImage(
+export async function regeneratePropImageAction(
+    scenario: Scenario,
+    newPropName: string,
+    newPropDescription: string,
+    imageModel: string = DEFAULT_SETTINGS.imageModel,
+): Promise<UpdatedEntityResult> {
+    await requireAuth();
+    try {
+        validateActionInput(
+            {
+                currentScenario: scenario.scenario,
+                oldPropName: newPropName,
+                newPropName: newPropName,
+                newPropDescription: newPropDescription,
+                style: scenario.style,
+                imageModel,
+            },
+            regeneratePropTextSchema,
+            "Validation error in regeneratePropImageAction",
+        );
+
+        const imageResult = await generateImageForScenario({
+            scenario,
+            entity: { name: newPropName, description: newPropDescription },
+            entityType: "prop",
+            modelName: imageModel,
+        });
+
+        return {
+            newImageGcsUri: imageResult.imageGcsUri,
+        };
+    } catch (error) {
+        handleError("regenerate prop image", error);
+    }
+    throw new Error("Unreachable code");
+}
+
+/**
+ * Analyze prop image and regenerate for style consistency
+ */
+export async function syncPropFromImageAction(
     scenario: Scenario,
     propName: string,
     currentPropDescription: string,
     imageGcsUri: string,
     allProps: Prop[],
-    style: string,
     llmModel: string = DEFAULT_SETTINGS.llmModel,
     thinkingBudget: number = DEFAULT_SETTINGS.thinkingBudget,
     imageModel: string = DEFAULT_SETTINGS.imageModel,
-): Promise<ScenarioUpdateResult> {
+): Promise<UpdatedEntityResult> {
     await requireAuth();
     try {
         validateActionInput(
@@ -683,13 +593,13 @@ export async function regeneratePropAndScenarioFromImage(
                 currentPropDescription,
                 imageGcsUri,
                 allProps,
-                style,
+                style: scenario.style,
                 llmModel,
                 thinkingBudget,
                 imageModel,
             },
             regeneratePropImageSchema,
-            "Validation error in regeneratePropAndScenarioFromImage",
+            "Validation error in syncPropFromImageAction",
         );
 
         const propListText = allProps
@@ -704,26 +614,19 @@ export async function regeneratePropAndScenarioFromImage(
                         mimeType: "image/png",
                     },
                 },
-                `Analyze the provided image and update both the prop description and scenario text to match the visual characteristics shown.
-
-CURRENT SCENARIO:
-"${scenario.scenario}"
+                `Analyze the provided image and update the prop description to match the visual characteristics shown.
 
 ALL PROPS IN THE STORY:
 ${propListText}
 
 PROP TO UPDATE (${propName}):
-"${currentPropDescription}"
-
+"${currentPropDescription}"\n
 INSTRUCTIONS:
 1. Examine the uploaded image carefully
 2. Update ONLY the description of ${propName} to accurately reflect what you see in the image
-3. Update any references to ${propName} in the scenario text to maintain consistency with the new prop
-4. PRESERVE ALL OTHER PROPS - do not remove or modify descriptions of other props
-7. Preserve the story narrative and flow, but ensure all descriptions of ${propName} match the visual characteristics
-8. Keep the same tone and style as the original text
+3. Do NOT modify the scenario text.
 
-Return both the updated scenario (maintaining all props) and the updated description for ${propName}.`,
+Return a JSON object with updatedProp (name, description).`,
             ],
             {
                 ...geminiConfig,
@@ -732,39 +635,32 @@ Return both the updated scenario (maintaining all props) and the updated descrip
                     thinkingBudget,
                 },
                 responseMimeType: "application/json",
-                responseSchema: z.toJSONSchema(PropScenarioUpdateSchema),
+                responseSchema: z.toJSONSchema(PropUpdateSchema),
             },
             llmModel,
         );
 
-        const propScenarioUpdateResult = PropScenarioUpdateSchema.safeParse(
-            JSON.parse(text!),
-        );
-        if (!propScenarioUpdateResult.success) {
-            handleError(
-                "parse prop scenario update",
-                propScenarioUpdateResult.error,
-            );
+        const propUpdateResult = PropUpdateSchema.safeParse(JSON.parse(text!));
+        if (!propUpdateResult.success) {
+            handleError("parse prop scenario update", propUpdateResult.error);
         }
-        const propScenarioUpdate = propScenarioUpdateResult.data!;
+        const propUpdate = propUpdateResult.data!;
 
+        // Regenerate image for style consistency
         const imageResult = await generateImageForScenario({
             scenario,
-            entity: {
-                name: propScenarioUpdate.updatedProp.name,
-                description: propScenarioUpdate.updatedProp.description,
-            },
+            entity: propUpdate.updatedProp,
             entityType: "prop",
             modelName: imageModel,
+            referenceImageGcsUri: imageGcsUri,
         });
 
         return {
-            updatedScenario: propScenarioUpdate.updatedScenario,
-            updatedProp: propScenarioUpdate.updatedProp,
+            updatedProp: propUpdate.updatedProp,
             newImageGcsUri: imageResult.imageGcsUri,
         };
     } catch (error) {
-        handleError("regenerate prop and scenario", error);
+        handleError("sync prop from image", error);
     }
     throw new Error("Unreachable code");
 }

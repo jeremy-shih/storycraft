@@ -8,14 +8,22 @@ interface SettingCardProps {
     setting: Setting;
     index: number;
     isLoading: boolean;
-    onUpdate: (index: number, updatedSetting: Setting) => void;
+    isDeleting: boolean;
+    onUpdate: (
+        index: number,
+        updatedSetting: Setting,
+        updateScenarioText?: boolean,
+    ) => void;
     onRemove: (index: number) => void;
     onRegenerateImage: (
         index: number,
         name: string,
         description: string,
-    ) => void;
-    onUploadImage: (index: number, file: File) => void;
+    ) => Promise<Partial<Setting> | void>;
+    onUploadImage: (
+        index: number,
+        file: File,
+    ) => Promise<Partial<Setting> | void>;
     isInitiallyEditing?: boolean;
 }
 
@@ -23,6 +31,7 @@ export const SettingCard = memo(function SettingCard({
     setting,
     index,
     isLoading,
+    isDeleting,
     onUpdate,
     onRemove,
     onRegenerateImage,
@@ -31,7 +40,7 @@ export const SettingCard = memo(function SettingCard({
 }: SettingCardProps) {
     const handleRegenerate = useCallback(
         (idx: number, s: Setting) => {
-            onRegenerateImage(idx, s.name, s.description);
+            return onRegenerateImage(idx, s.name, s.description);
         },
         [onRegenerateImage],
     );
@@ -43,6 +52,7 @@ export const SettingCard = memo(function SettingCard({
             title="Setting"
             entityType="setting"
             isLoading={isLoading}
+            isDeleting={isDeleting}
             onUpdate={onUpdate}
             onRemove={onRemove}
             onRegenerateImage={handleRegenerate}

@@ -8,9 +8,11 @@ import {
     deleteCharacterFromScenario,
     deleteSettingFromScenario,
     deletePropFromScenario,
+    updateScenarioTextAction,
 } from "@/app/features/scenario/actions/modify-scenario";
 import { useEntityState } from "./use-entity-state";
-import { Scenario } from "@/app/types";
+import { Character, Prop, Scenario, Setting } from "@/app/types";
+import { toast } from "sonner";
 
 export function useScenarioTabState() {
     const { scenario, setScenario } = useScenarioStore();
@@ -48,8 +50,10 @@ export function useScenarioTabState() {
     );
 
     const {
+        entities: characters,
         isLoading: isCharacterLoading,
-        handleUpdate: handleUpdateCharacter,
+        isDeleting: isCharacterDeleting,
+        handleUpdate: _handleUpdateCharacter,
         handleAdd: handleAddCharacter,
         handleRemove: handleRemoveCharacter,
         newEntityIndex: newCharacterIndex,
@@ -60,12 +64,38 @@ export function useScenarioTabState() {
         scenarioText: scenario?.scenario,
         entityType: "character",
         defaultNewEntity: {
-            name: "New Character",
-            description: "Enter character description...",
+            name: "",
+            description: "",
             voice: "",
         },
         loadingStates: generatingCharacterImages,
     });
+
+    const handleUpdateCharacter = useCallback(
+        async (
+            index: number,
+            updatedCharacter: Character,
+            updateScenarioText?: boolean,
+        ) => {
+            let newScenarioText: string | undefined;
+            if (updateScenarioText && scenario) {
+                try {
+                    newScenarioText = await updateScenarioTextAction(
+                        scenario.scenario,
+                        scenario.characters[index]?.name || "",
+                        updatedCharacter.name,
+                        updatedCharacter.description,
+                        "character",
+                    );
+                } catch (e) {
+                    console.error("Failed to update scenario text", e);
+                    toast.error("Failed to update scenario text");
+                }
+            }
+            _handleUpdateCharacter(index, updatedCharacter, newScenarioText);
+        },
+        [_handleUpdateCharacter, scenario],
+    );
 
     const updateSettings = useCallback(
         (
@@ -84,8 +114,10 @@ export function useScenarioTabState() {
     );
 
     const {
+        entities: settings,
         isLoading: isSettingLoading,
-        handleUpdate: handleUpdateSetting,
+        isDeleting: isSettingDeleting,
+        handleUpdate: _handleUpdateSetting,
         handleAdd: handleAddSetting,
         handleRemove: handleRemoveSetting,
         newEntityIndex: newSettingIndex,
@@ -96,11 +128,37 @@ export function useScenarioTabState() {
         scenarioText: scenario?.scenario,
         entityType: "setting",
         defaultNewEntity: {
-            name: "New Setting",
-            description: "Enter setting description...",
+            name: "",
+            description: "",
         },
         loadingStates: generatingSettingImages,
     });
+
+    const handleUpdateSetting = useCallback(
+        async (
+            index: number,
+            updatedSetting: Setting,
+            updateScenarioText?: boolean,
+        ) => {
+            let newScenarioText: string | undefined;
+            if (updateScenarioText && scenario) {
+                try {
+                    newScenarioText = await updateScenarioTextAction(
+                        scenario.scenario,
+                        scenario.settings[index]?.name || "",
+                        updatedSetting.name,
+                        updatedSetting.description,
+                        "setting",
+                    );
+                } catch (e) {
+                    console.error("Failed to update scenario text", e);
+                    toast.error("Failed to update scenario text");
+                }
+            }
+            _handleUpdateSetting(index, updatedSetting, newScenarioText);
+        },
+        [_handleUpdateSetting, scenario],
+    );
 
     const updateProps = useCallback(
         (updatedProps: Scenario["props"], updatedScenarioText?: string) => {
@@ -116,8 +174,10 @@ export function useScenarioTabState() {
     );
 
     const {
+        entities: props,
         isLoading: isPropLoading,
-        handleUpdate: handleUpdateProp,
+        isDeleting: isPropDeleting,
+        handleUpdate: _handleUpdateProp,
         handleAdd: handleAddProp,
         handleRemove: handleRemoveProp,
         newEntityIndex: newPropIndex,
@@ -128,11 +188,37 @@ export function useScenarioTabState() {
         scenarioText: scenario?.scenario,
         entityType: "prop",
         defaultNewEntity: {
-            name: "New Prop",
-            description: "Enter prop description...",
+            name: "",
+            description: "",
         },
         loadingStates: generatingPropImages,
     });
+
+    const handleUpdateProp = useCallback(
+        async (
+            index: number,
+            updatedProp: Prop,
+            updateScenarioText?: boolean,
+        ) => {
+            let newScenarioText: string | undefined;
+            if (updateScenarioText && scenario) {
+                try {
+                    newScenarioText = await updateScenarioTextAction(
+                        scenario.scenario,
+                        scenario.props[index]?.name || "",
+                        updatedProp.name,
+                        updatedProp.description,
+                        "prop",
+                    );
+                } catch (e) {
+                    console.error("Failed to update scenario text", e);
+                    toast.error("Failed to update scenario text");
+                }
+            }
+            _handleUpdateProp(index, updatedProp, newScenarioText);
+        },
+        [_handleUpdateProp, scenario],
+    );
 
     const handleUpdateScenarioDescription = useCallback(
         (newDescription: string) => {
@@ -159,7 +245,9 @@ export function useScenarioTabState() {
         handleUpdateScenarioDescription,
         handleUpdateMusic,
         // Characters
+        characters,
         isCharacterLoading,
+        isCharacterDeleting,
         handleUpdateCharacter,
         handleAddCharacter,
         handleRemoveCharacter,
@@ -167,7 +255,9 @@ export function useScenarioTabState() {
         handleUploadCharacterImage,
         newCharacterIndex,
         // Settings
+        settings,
         isSettingLoading,
+        isSettingDeleting,
         handleUpdateSetting,
         handleAddSetting,
         handleRemoveSetting,
@@ -175,7 +265,9 @@ export function useScenarioTabState() {
         handleUploadSettingImage,
         newSettingIndex,
         // Props
+        props,
         isPropLoading,
+        isPropDeleting,
         handleUpdateProp,
         handleAddProp,
         handleRemoveProp,

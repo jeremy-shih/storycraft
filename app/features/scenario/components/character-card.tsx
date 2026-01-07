@@ -9,15 +9,23 @@ interface CharacterCardProps {
     character: Character;
     index: number;
     isLoading: boolean;
-    onUpdate: (index: number, updatedCharacter: Character) => void;
+    isDeleting: boolean;
+    onUpdate: (
+        index: number,
+        updatedCharacter: Character,
+        updateScenarioText?: boolean,
+    ) => void;
     onRemove: (index: number) => void;
     onRegenerateImage: (
         index: number,
         name: string,
         description: string,
         voice: string,
-    ) => void;
-    onUploadImage: (index: number, file: File) => void;
+    ) => Promise<Partial<Character> | void>;
+    onUploadImage: (
+        index: number,
+        file: File,
+    ) => Promise<Partial<Character> | void>;
     isInitiallyEditing?: boolean;
 }
 
@@ -25,6 +33,7 @@ export const CharacterCard = memo(function CharacterCard({
     character,
     index,
     isLoading,
+    isDeleting,
     onUpdate,
     onRemove,
     onRegenerateImage,
@@ -33,7 +42,7 @@ export const CharacterCard = memo(function CharacterCard({
 }: CharacterCardProps) {
     const handleRegenerate = useCallback(
         (idx: number, char: Character) => {
-            onRegenerateImage(
+            return onRegenerateImage(
                 idx,
                 char.name,
                 char.description,
@@ -81,6 +90,7 @@ export const CharacterCard = memo(function CharacterCard({
             title="Character"
             entityType="character"
             isLoading={isLoading}
+            isDeleting={isDeleting}
             onUpdate={onUpdate}
             onRemove={onRemove}
             onRegenerateImage={handleRegenerate}

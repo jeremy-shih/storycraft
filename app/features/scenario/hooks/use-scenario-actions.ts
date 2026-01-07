@@ -5,12 +5,12 @@ import { useSettings } from "@/app/features/shared/hooks/use-settings";
 import { clientLogger } from "@/lib/utils/client-logger";
 import { generateStoryboard } from "@/app/features/scenario/actions/generate-scenes";
 import {
-    regenerateCharacterAndScenarioFromText,
-    regenerateCharacterAndScenarioFromImage,
-    regenerateSettingAndScenarioFromText,
-    regenerateSettingAndScenarioFromImage,
-    regeneratePropAndScenarioFromText,
-    regeneratePropAndScenarioFromImage,
+    regenerateCharacterImageAction,
+    syncCharacterFromImageAction,
+    regenerateSettingImageAction,
+    syncSettingFromImageAction,
+    regeneratePropImageAction,
+    syncPropFromImageAction,
 } from "@/app/features/scenario/actions/modify-scenario";
 import { useImageUpload } from "@/app/features/shared/hooks/use-image-upload";
 import { toast } from "sonner";
@@ -72,32 +72,19 @@ export function useScenarioActions() {
         startLoading("characters", characterIndex);
         setErrorMessage(null);
         try {
-            const { updatedScenario: newScenarioText, newImageGcsUri } =
-                await regenerateCharacterAndScenarioFromText(
-                    scenario,
-                    scenario.characters[characterIndex].name,
-                    name,
-                    description,
-                    style,
-                    settings.llmModel,
-                    settings.thinkingBudget,
-                    settings.imageModel,
-                );
+            const { newImageGcsUri } = await regenerateCharacterImageAction(
+                scenario,
+                name,
+                description,
+                settings.imageModel,
+            );
 
-            const updatedCharacters = [...scenario.characters];
-            updatedCharacters[characterIndex] = {
-                ...updatedCharacters[characterIndex],
-                name: name,
-                description: description,
-                voice: voice,
+            return {
+                name,
+                description,
+                voice,
                 imageGcsUri: newImageGcsUri,
             };
-
-            setScenario({
-                ...scenario,
-                characters: updatedCharacters,
-                scenario: newScenarioText,
-            });
         } catch (error) {
             clientLogger.error("Error regenerating character image:", error);
             const message = `Failed to regenerate character image: ${error instanceof Error ? error.message : "Unknown error"}`;
@@ -124,35 +111,28 @@ export function useScenarioActions() {
         try {
             const resizedImageGcsUri = await uploadImageFile(file);
 
-            const result = await regenerateCharacterAndScenarioFromImage(
+            const result = await syncCharacterFromImageAction(
                 scenario,
                 scenario.characters[characterIndex].name,
                 scenario.characters[characterIndex].description,
                 scenario.characters[characterIndex].voice || "",
                 resizedImageGcsUri,
                 scenario.characters,
-                style,
                 settings.llmModel,
                 settings.thinkingBudget,
                 settings.imageModel,
             );
 
-            const updatedCharacters = [...scenario.characters];
             if (result.updatedCharacter) {
-                updatedCharacters[characterIndex] = {
-                    ...updatedCharacters[characterIndex],
-                    description: result.updatedCharacter.description,
-                    voice: result.updatedCharacter.voice,
-                    name: result.updatedCharacter.name,
+                return {
+                    ...result.updatedCharacter,
+                    imageGcsUri: result.newImageGcsUri,
+                };
+            } else {
+                return {
                     imageGcsUri: result.newImageGcsUri,
                 };
             }
-
-            setScenario({
-                ...scenario,
-                scenario: result.updatedScenario,
-                characters: updatedCharacters,
-            });
         } catch (error) {
             clientLogger.error("Error uploading character image:", error);
             const message =
@@ -176,32 +156,19 @@ export function useScenarioActions() {
         startLoading("settings", settingIndex);
         setErrorMessage(null);
         try {
-            const { updatedScenario: newScenarioText, newImageGcsUri } =
-                await regenerateSettingAndScenarioFromText(
-                    scenario,
-                    scenario.settings[settingIndex].name,
-                    name,
-                    description,
-                    style,
-                    scenario.aspectRatio,
-                    settings.llmModel,
-                    settings.thinkingBudget,
-                    settings.imageModel,
-                );
+            const { newImageGcsUri } = await regenerateSettingImageAction(
+                scenario,
+                name,
+                description,
+                scenario.aspectRatio,
+                settings.imageModel,
+            );
 
-            const updatedSettings = [...scenario.settings];
-            updatedSettings[settingIndex] = {
-                ...updatedSettings[settingIndex],
-                name: name,
-                description: description,
+            return {
+                name,
+                description,
                 imageGcsUri: newImageGcsUri,
             };
-
-            setScenario({
-                ...scenario,
-                settings: updatedSettings,
-                scenario: newScenarioText,
-            });
         } catch (error) {
             clientLogger.error("Error regenerating setting image:", error);
             const message = `Failed to regenerate setting image: ${error instanceof Error ? error.message : "Unknown error"}`;
@@ -224,33 +191,27 @@ export function useScenarioActions() {
         try {
             const resizedImageGcsUri = await uploadImageFile(file);
 
-            const result = await regenerateSettingAndScenarioFromImage(
+            const result = await syncSettingFromImageAction(
                 scenario,
                 scenario.settings[settingIndex].name,
                 scenario.settings[settingIndex].description,
                 resizedImageGcsUri,
                 scenario.settings,
-                style,
                 settings.llmModel,
                 settings.thinkingBudget,
                 settings.imageModel,
             );
 
-            const updatedSettings = [...scenario.settings];
             if (result.updatedSetting) {
-                updatedSettings[settingIndex] = {
-                    ...updatedSettings[settingIndex],
-                    description: result.updatedSetting.description,
-                    name: result.updatedSetting.name,
+                return {
+                    ...result.updatedSetting,
+                    imageGcsUri: result.newImageGcsUri,
+                };
+            } else {
+                return {
                     imageGcsUri: result.newImageGcsUri,
                 };
             }
-
-            setScenario({
-                ...scenario,
-                scenario: result.updatedScenario,
-                settings: updatedSettings,
-            });
         } catch (error) {
             clientLogger.error("Error uploading setting image:", error);
             const message =
@@ -274,31 +235,18 @@ export function useScenarioActions() {
         startLoading("props", propIndex);
         setErrorMessage(null);
         try {
-            const { updatedScenario: newScenarioText, newImageGcsUri } =
-                await regeneratePropAndScenarioFromText(
-                    scenario,
-                    scenario.props[propIndex].name,
-                    name,
-                    description,
-                    style,
-                    settings.llmModel,
-                    settings.thinkingBudget,
-                    settings.imageModel,
-                );
+            const { newImageGcsUri } = await regeneratePropImageAction(
+                scenario,
+                name,
+                description,
+                settings.imageModel,
+            );
 
-            const updatedProps = [...scenario.props];
-            updatedProps[propIndex] = {
-                ...updatedProps[propIndex],
-                name: name,
-                description: description,
+            return {
+                name,
+                description,
                 imageGcsUri: newImageGcsUri,
             };
-
-            setScenario({
-                ...scenario,
-                props: updatedProps,
-                scenario: newScenarioText,
-            });
         } catch (error) {
             clientLogger.error("Error regenerating prop image:", error);
             const message = `Failed to regenerate prop image: ${error instanceof Error ? error.message : "Unknown error"}`;
@@ -318,33 +266,27 @@ export function useScenarioActions() {
         try {
             const resizedImageGcsUri = await uploadImageFile(file);
 
-            const result = await regeneratePropAndScenarioFromImage(
+            const result = await syncPropFromImageAction(
                 scenario,
                 scenario.props[propIndex].name,
                 scenario.props[propIndex].description,
                 resizedImageGcsUri,
                 scenario.props,
-                style,
                 settings.llmModel,
                 settings.thinkingBudget,
                 settings.imageModel,
             );
 
-            const updatedProps = [...scenario.props];
             if (result.updatedProp) {
-                updatedProps[propIndex] = {
-                    ...updatedProps[propIndex],
-                    description: result.updatedProp.description,
-                    name: result.updatedProp.name,
+                return {
+                    ...result.updatedProp,
+                    imageGcsUri: result.newImageGcsUri,
+                };
+            } else {
+                return {
                     imageGcsUri: result.newImageGcsUri,
                 };
             }
-
-            setScenario({
-                ...scenario,
-                scenario: result.updatedScenario,
-                props: updatedProps,
-            });
         } catch (error) {
             clientLogger.error("Error uploading prop image:", error);
             const message =

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { clientLogger } from "@/lib/utils/client-logger";
 import { Entity } from "@/app/types";
 
@@ -14,7 +14,7 @@ interface UseEntityStateOptions<T extends Entity> {
         scenarioText: string,
         name: string,
         description: string,
-    ) => Promise<{ updatedScenario: string }>;
+    ) => Promise<{ updatedScenario?: string }>;
     scenarioText: string | undefined;
     entityType: string;
     defaultNewEntity: T;
@@ -22,7 +22,7 @@ interface UseEntityStateOptions<T extends Entity> {
 }
 
 export function useEntityState<T extends Entity>({
-    entities = [],
+    entities: propEntities = [],
     onUpdateEntities,
     deleteEntityAction,
     scenarioText = "",
@@ -30,8 +30,21 @@ export function useEntityState<T extends Entity>({
     defaultNewEntity,
     loadingStates,
 }: UseEntityStateOptions<T>) {
+    const [localEntities, setLocalEntities] = useState<T[]>(propEntities);
     const [localLoading, setLocalLoading] = useState<Set<number>>(new Set());
     const [newEntityIndex, setNewEntityIndex] = useState<number | null>(null);
+
+    // Sync localEntities with propEntities when props change,
+    // but preserve the new unsaved entity if one is being added.
+    useEffect(() => {
+        setLocalEntities((prev) => {
+            if (newEntityIndex !== null && prev.length > propEntities.length) {
+                const newEntity = prev[prev.length - 1];
+                return [...propEntities, newEntity];
+            }
+            return propEntities;
+        });
+    }, [propEntities, newEntityIndex]);
 
     const isLoading = useCallback(
         (index: number) => {
@@ -40,35 +53,50 @@ export function useEntityState<T extends Entity>({
         [loadingStates, localLoading],
     );
 
+    const isDeleting = useCallback(
+        (index: number) => {
+            return localLoading.has(index);
+        },
+        [localLoading],
+    );
+
     const handleUpdate = useCallback(
-        (index: number, updatedEntity: T) => {
-            const updatedEntities = [...entities];
+        (index: number, updatedEntity: T, updatedScenarioText?: string) => {
+            const updatedEntities = [...localEntities];
             updatedEntities[index] = {
                 ...updatedEntities[index],
                 ...updatedEntity,
             };
-            onUpdateEntities(updatedEntities);
+            onUpdateEntities(updatedEntities, updatedScenarioText);
             if (newEntityIndex === index) setNewEntityIndex(null);
         },
-        [entities, onUpdateEntities, newEntityIndex],
+        [localEntities, onUpdateEntities, newEntityIndex],
     );
 
     const handleAdd = useCallback(() => {
-        const updatedEntities = [...entities, defaultNewEntity];
-        onUpdateEntities(updatedEntities);
+        const updatedEntities = [...localEntities, defaultNewEntity];
+        setLocalEntities(updatedEntities);
         setNewEntityIndex(updatedEntities.length - 1);
-    }, [entities, onUpdateEntities, defaultNewEntity]);
+    }, [localEntities, defaultNewEntity]);
 
     const handleRemove = useCallback(
         async (index: number) => {
+            if (index === newEntityIndex) {
+                setLocalEntities((prev) => prev.filter((_, i) => i !== index));
+                setNewEntityIndex(null);
+                return;
+            }
+
             setLocalLoading((prev) => new Set([...prev, index]));
             try {
                 const response = await deleteEntityAction(
                     scenarioText,
-                    entities[index].name,
-                    entities[index].description,
+                    localEntities[index].name,
+                    localEntities[index].description,
                 );
-                const updatedEntities = entities.filter((_, i) => i !== index);
+                const updatedEntities = localEntities.filter(
+                    (_, i) => i !== index,
+                );
                 onUpdateEntities(updatedEntities, response.updatedScenario);
             } catch (error) {
                 clientLogger.error(`Error deleting ${entityType}:`, error);
@@ -81,16 +109,19 @@ export function useEntityState<T extends Entity>({
             }
         },
         [
-            entities,
+            localEntities,
             scenarioText,
             deleteEntityAction,
             onUpdateEntities,
             entityType,
+            newEntityIndex,
         ],
     );
 
     return {
+        entities: localEntities,
         isLoading,
+        isDeleting,
         handleUpdate,
         handleAdd,
         handleRemove,

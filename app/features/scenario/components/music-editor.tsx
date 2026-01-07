@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, memo } from "react";
+import { useState, useCallback, memo, useEffect } from "react";
 import { Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ScenarioFormActions } from "./scenario-form-actions";
 
 interface MusicEditorProps {
     music: string;
@@ -15,71 +17,72 @@ export const MusicEditor = memo(function MusicEditor({
 }: MusicEditorProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editedMusic, setEditedMusic] = useState(music);
-    const [isHovering, setIsHovering] = useState(false);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
+        if (!isEditing) {
+            setEditedMusic(music);
+        }
+    }, [music, isEditing]);
+
+    const handleSave = useCallback(async () => {
+        setIsSaving(true);
+        try {
+            await Promise.resolve(onSave(editedMusic));
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Failed to save music description:", error);
+        } finally {
+            setIsSaving(false);
+        }
+    }, [editedMusic, onSave]);
+
+    const handleCancel = useCallback(() => {
         setEditedMusic(music);
-    }, [music]);
-
-    const handleSave = useCallback(() => {
-        if (editedMusic !== music) {
-            onSave(editedMusic);
-        }
         setIsEditing(false);
-    }, [editedMusic, music, onSave]);
-
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (
-                containerRef.current &&
-                !containerRef.current.contains(event.target as Node)
-            ) {
-                if (isEditing) {
-                    handleSave();
-                }
-            }
-        }
-
-        if (isEditing) {
-            document.addEventListener("mousedown", handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [isEditing, handleSave]);
+    }, [music]);
 
     return (
         <div className="space-y-4">
-            <div className="col-span-1">
+            <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold">Music</h3>
-            </div>
-            <div
-                ref={containerRef}
-                className="group relative"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-            >
-                {!isEditing && isHovering && (
-                    <button
+                {!isEditing && (
+                    <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setIsEditing(true)}
-                        className="absolute right-2 top-2 rounded-full bg-primary/80 p-2 text-primary-foreground shadow-sm transition-all hover:bg-primary"
+                        className="flex items-center gap-2"
                     >
-                        <Pencil className="h-4 w-4" />
-                    </button>
+                        <Pencil className="h-3.5 w-3.5" />
+                        Edit
+                    </Button>
                 )}
+            </div>
+
+            <div
+                className={`rounded-xl border p-6 transition-all ${isEditing ? "bg-accent/5 shadow-lg ring-1 ring-accent/20" : "bg-card hover:shadow-md"}`}
+            >
                 {isEditing ? (
-                    <Textarea
-                        value={editedMusic}
-                        onChange={(e) => setEditedMusic(e.target.value)}
-                        className="min-h-[100px] w-full"
-                        placeholder="Enter music description..."
-                        autoFocus
-                    />
+                    <div className="space-y-4">
+                        <Textarea
+                            value={editedMusic}
+                            onChange={(e) => setEditedMusic(e.target.value)}
+                            className="min-h-[100px] w-full resize-none"
+                            placeholder="Enter music description..."
+                            autoFocus
+                        />
+                        <ScenarioFormActions
+                            onSave={handleSave}
+                            onCancel={handleCancel}
+                            isSaving={isSaving}
+                        />
+                    </div>
                 ) : (
-                    <p className="whitespace-pre-wrap rounded-lg border border-transparent p-4 transition-colors group-hover:border-gray-200">
-                        {music}
-                    </p>
+                    <div className="prose prose-sm max-w-none rounded-lg border border-transparent bg-muted/30 p-4 text-muted-foreground transition-colors hover:border-border/50">
+                        <p className="whitespace-pre-wrap leading-relaxed">
+                            {music}
+                        </p>
+                    </div>
                 )}
             </div>
         </div>

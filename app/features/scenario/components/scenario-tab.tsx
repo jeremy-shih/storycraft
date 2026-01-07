@@ -19,7 +19,9 @@ export const ScenarioTab = React.memo(function ScenarioTab() {
         handleUpdateScenarioDescription,
         handleUpdateMusic,
         // Characters
+        characters,
         isCharacterLoading,
+        isCharacterDeleting,
         handleUpdateCharacter,
         handleAddCharacter,
         handleRemoveCharacter,
@@ -27,7 +29,9 @@ export const ScenarioTab = React.memo(function ScenarioTab() {
         handleUploadCharacterImage,
         newCharacterIndex,
         // Settings
+        settings,
         isSettingLoading,
+        isSettingDeleting,
         handleUpdateSetting,
         handleAddSetting,
         handleRemoveSetting,
@@ -35,7 +39,9 @@ export const ScenarioTab = React.memo(function ScenarioTab() {
         handleUploadSettingImage,
         newSettingIndex,
         // Props
+        props,
         isPropLoading,
+        isPropDeleting,
         handleUpdateProp,
         handleAddProp,
         handleRemoveProp,
@@ -75,12 +81,13 @@ export const ScenarioTab = React.memo(function ScenarioTab() {
                             </Button>
                         </div>
                         <div className="space-y-4">
-                            {scenario.characters.map((character, index) => (
+                            {characters.map((character, index) => (
                                 <CharacterCard
                                     key={`char-${index}`}
                                     character={character}
                                     index={index}
                                     isLoading={isCharacterLoading(index)}
+                                    isDeleting={isCharacterDeleting(index)}
                                     onUpdate={handleUpdateCharacter}
                                     onRemove={handleRemoveCharacter}
                                     onRegenerateImage={
@@ -110,12 +117,13 @@ export const ScenarioTab = React.memo(function ScenarioTab() {
                             </Button>
                         </div>
                         <div className="space-y-4">
-                            {scenario.props?.map((prop, index) => (
+                            {props.map((prop, index) => (
                                 <PropCard
                                     key={`prop-${index}`}
                                     prop={prop}
                                     index={index}
                                     isLoading={isPropLoading(index)}
+                                    isDeleting={isPropDeleting(index)}
                                     onUpdate={handleUpdateProp}
                                     onRemove={handleRemoveProp}
                                     onRegenerateImage={
@@ -143,12 +151,13 @@ export const ScenarioTab = React.memo(function ScenarioTab() {
                             </Button>
                         </div>
                         <div className="space-y-4">
-                            {scenario.settings.map((setting, index) => (
+                            {settings.map((setting, index) => (
                                 <SettingCard
                                     key={`setting-${index}`}
                                     setting={setting}
                                     index={index}
                                     isLoading={isSettingLoading(index)}
+                                    isDeleting={isSettingDeleting(index)}
                                     onUpdate={handleUpdateSetting}
                                     onRemove={handleRemoveSetting}
                                     onRegenerateImage={

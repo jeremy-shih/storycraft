@@ -16,6 +16,7 @@ export interface GenerateImageOptions {
     entityType?: "character" | "setting" | "prop";
     instruction?: string;
     imageGcsUri?: string;
+    referenceImageGcsUri?: string;
     aspectRatio?: string;
     modelName?: string;
 }
@@ -26,6 +27,12 @@ Constraints:
 * Adopt: The color grading, shadow density, and line quality of the reference.
 * Discard: The original composition and subject matter.
 * Reference Strength: High for style, 0% for content.`;
+
+const CONTENT_STYLE_INSTRUCTION = `I am providing a reference image. Update the visual style of this image to match the provided description and scenario style, while maintaining the subject matter and composition of the reference image.
+Constraints:
+
+* Adopt: The scenario style, lighting, and overall mood.
+* Preserve: The subjects, setting, and core composition of the reference image.`;
 
 /**
  * Centralized action to generate images for scenarios, including characters, settings, props, and scenes.
@@ -38,6 +45,7 @@ export async function generateImageForScenario({
     entityType,
     instruction,
     imageGcsUri,
+    referenceImageGcsUri,
     aspectRatio,
     modelName = DEFAULT_SETTINGS.imageModel,
 }: GenerateImageOptions): Promise<{ imageGcsUri: string }> {
@@ -140,7 +148,15 @@ export async function generateImageForScenario({
             }
             content.push(createPartFromText(promptString));
         } else if (entity) {
-            // Initial entity generation (Character, Setting, Prop)
+            // Initial entity generation or regeneration from uploaded image
+            if (referenceImageGcsUri) {
+                logger.debug("Adding reference image for entity sync");
+                content.push(createPartFromText(CONTENT_STYLE_INSTRUCTION));
+                content.push(
+                    createPartFromUri(referenceImageGcsUri, "image/png"),
+                );
+            }
+
             const shotType =
                 entityType === "character"
                     ? "Medium Shot"

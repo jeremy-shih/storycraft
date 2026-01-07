@@ -20,5 +20,6 @@ StoryCraft aims to empower creators by bridging the gap between imagination and 
 
 - **High-Fidelity Scene Generation**: Precise control over AI models to ensure generated visuals align perfectly with the user's artistic intent.
     - **AI-Powered Style Reference**: Automatically analyze and describe the visual style of uploaded reference images to assist in prompt creation.
+- **Interactive Scenario Management**: Efficiently define and manage the visual identity of characters, props, and settings with a dedicated edit-mode interface and integrated AI image generation.
 - **Real-Time Timeline Editor**: A responsive, interactive environment for previewing scenes, adjusting timing, and synchronizing audio.
 - **Seamless Video Export**: One-click rendering process that combines scenes, voiceovers, and music into a final professional video file.

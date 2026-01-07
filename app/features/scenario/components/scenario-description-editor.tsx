@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, memo } from "react";
+import { useState, useCallback, memo, useEffect } from "react";
 import { Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ScenarioFormActions } from "./scenario-form-actions";
 
 interface ScenarioDescriptionEditorProps {
     description: string;
@@ -16,73 +18,74 @@ export const ScenarioDescriptionEditor = memo(
     }: ScenarioDescriptionEditorProps) {
         const [isEditing, setIsEditing] = useState(false);
         const [editedDescription, setEditedDescription] = useState(description);
-        const [isHovering, setIsHovering] = useState(false);
-        const containerRef = useRef<HTMLDivElement>(null);
+        const [isSaving, setIsSaving] = useState(false);
 
         useEffect(() => {
+            if (!isEditing) {
+                setEditedDescription(description);
+            }
+        }, [description, isEditing]);
+
+        const handleSave = useCallback(async () => {
+            setIsSaving(true);
+            try {
+                await Promise.resolve(onSave(editedDescription));
+                setIsEditing(false);
+            } catch (error) {
+                console.error("Failed to save scenario description:", error);
+            } finally {
+                setIsSaving(false);
+            }
+        }, [editedDescription, onSave]);
+
+        const handleCancel = useCallback(() => {
             setEditedDescription(description);
+            setIsEditing(false);
         }, [description]);
 
-        const handleSave = useCallback(() => {
-            if (editedDescription !== description) {
-                onSave(editedDescription);
-            }
-            setIsEditing(false);
-        }, [editedDescription, description, onSave]);
-
-        useEffect(() => {
-            function handleClickOutside(event: MouseEvent) {
-                if (
-                    containerRef.current &&
-                    !containerRef.current.contains(event.target as Node)
-                ) {
-                    if (isEditing) {
-                        handleSave();
-                    }
-                }
-            }
-
-            if (isEditing) {
-                document.addEventListener("mousedown", handleClickOutside);
-            }
-            return () => {
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }, [isEditing, handleSave]);
-
         return (
-            <div className="mx-auto max-w-4xl space-y-4">
-                <div className="col-span-1">
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold">Scenario</h3>
-                </div>
-                <div
-                    ref={containerRef}
-                    className="group relative"
-                    onMouseEnter={() => setIsHovering(true)}
-                    onMouseLeave={() => setIsHovering(false)}
-                >
-                    {!isEditing && isHovering && (
-                        <button
+                    {!isEditing && (
+                        <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => setIsEditing(true)}
-                            className="absolute right-2 top-2 rounded-full bg-primary/80 p-2 text-primary-foreground shadow-sm transition-all hover:bg-primary"
+                            className="flex items-center gap-2"
                         >
-                            <Pencil className="h-4 w-4" />
-                        </button>
+                            <Pencil className="h-3.5 w-3.5" />
+                            Edit
+                        </Button>
                     )}
+                </div>
+
+                <div
+                    className={`rounded-xl border p-6 transition-all ${isEditing ? "bg-accent/5 shadow-lg ring-1 ring-accent/20" : "bg-card hover:shadow-md"}`}
+                >
                     {isEditing ? (
-                        <Textarea
-                            value={editedDescription}
-                            onChange={(e) =>
-                                setEditedDescription(e.target.value)
-                            }
-                            className="min-h-[200px] w-full"
-                            placeholder="Enter your scenario..."
-                            autoFocus
-                        />
+                        <div className="space-y-4">
+                            <Textarea
+                                value={editedDescription}
+                                onChange={(e) =>
+                                    setEditedDescription(e.target.value)
+                                }
+                                className="min-h-[200px] w-full resize-none"
+                                placeholder="Enter your scenario..."
+                                autoFocus
+                            />
+                            <ScenarioFormActions
+                                onSave={handleSave}
+                                onCancel={handleCancel}
+                                isSaving={isSaving}
+                            />
+                        </div>
                     ) : (
-                        <p className="whitespace-pre-wrap rounded-lg border border-transparent p-4 transition-colors group-hover:border-gray-200">
-                            {description}
-                        </p>
+                        <div className="prose prose-sm max-w-none rounded-lg border border-transparent bg-muted/30 p-4 text-muted-foreground transition-colors hover:border-border/50">
+                            <p className="whitespace-pre-wrap leading-relaxed">
+                                {description}
+                            </p>
+                        </div>
                     )}
                 </div>
             </div>

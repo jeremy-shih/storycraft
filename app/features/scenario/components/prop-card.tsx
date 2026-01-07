@@ -8,14 +8,19 @@ interface PropCardProps {
     prop: Prop;
     index: number;
     isLoading: boolean;
-    onUpdate: (index: number, updatedProp: Prop) => void;
+    isDeleting: boolean;
+    onUpdate: (
+        index: number,
+        updatedProp: Prop,
+        updateScenarioText?: boolean,
+    ) => void;
     onRemove: (index: number) => void;
     onRegenerateImage: (
         index: number,
         name: string,
         description: string,
-    ) => void;
-    onUploadImage: (index: number, file: File) => void;
+    ) => Promise<Partial<Prop> | void>;
+    onUploadImage: (index: number, file: File) => Promise<Partial<Prop> | void>;
     isInitiallyEditing?: boolean;
 }
 
@@ -23,6 +28,7 @@ export const PropCard = memo(function PropCard({
     prop,
     index,
     isLoading,
+    isDeleting,
     onUpdate,
     onRemove,
     onRegenerateImage,
@@ -31,7 +37,7 @@ export const PropCard = memo(function PropCard({
 }: PropCardProps) {
     const handleRegenerate = useCallback(
         (idx: number, p: Prop) => {
-            onRegenerateImage(idx, p.name, p.description);
+            return onRegenerateImage(idx, p.name, p.description);
         },
         [onRegenerateImage],
     );
@@ -43,6 +49,7 @@ export const PropCard = memo(function PropCard({
             title="Prop"
             entityType="prop"
             isLoading={isLoading}
+            isDeleting={isDeleting}
             onUpdate={onUpdate}
             onRemove={onRemove}
             onRegenerateImage={handleRegenerate}
