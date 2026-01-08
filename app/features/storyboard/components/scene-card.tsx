@@ -9,7 +9,14 @@ import {
     Video,
     Trash2,
     MessageCircle,
+    Expand,
 } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
 import { useRef, useState, memo } from "react";
 import { Scene, Scenario } from "@/app/types";
 import { EditSceneModal } from "./edit-scene-modal";
@@ -60,6 +67,7 @@ export const SceneCard = memo(function SceneCard({
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isConversationalEditOpen, setIsConversationalEditOpen] =
         useState(false);
+    const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleUploadClick = () => {
@@ -86,7 +94,7 @@ export const SceneCard = memo(function SceneCard({
             onDrop={onDrop}
         >
             {/* Helper for Dragging - only visible on hover */}
-            
+
             {/* Media Area */}
             <div className="bg-muted/20 relative aspect-[16/9] w-full overflow-hidden rounded-t-[20px]">
                 {isGenerating && (
@@ -101,12 +109,32 @@ export const SceneCard = memo(function SceneCard({
                         aspectRatio={scenario.aspectRatio}
                     />
                 ) : (
-                    <GcsImage
-                        gcsUri={scene.imageGcsUri || null}
-                        alt={scene.description || `Scene ${sceneNumber}`}
-                        className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
+                    <>
+                        <GcsImage
+                            gcsUri={scene.imageGcsUri || null}
+                            alt={scene.description || `Scene ${sceneNumber}`}
+                            className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                        {!hideControls && (
+                            <div className="absolute right-2 bottom-2 z-20 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                <Button
+                                    size="icon"
+                                    variant="secondary"
+                                    className="h-8 w-8 rounded-full border-0 bg-black/50 text-white backdrop-blur-md hover:bg-black/70 hover:text-white"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsFullScreenOpen(true);
+                                    }}
+                                    disabled={isGenerating}
+                                    title="View Full Screen"
+                                    aria-label="View Full Screen"
+                                >
+                                    <Expand className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
+                    </>
                 )}
 
                 {/* Overlay Actions */}
@@ -232,6 +260,26 @@ export const SceneCard = memo(function SceneCard({
                 scenario={scenario}
                 onUpdate={onUpdate}
             />
+
+            <Dialog open={isFullScreenOpen} onOpenChange={setIsFullScreenOpen}>
+                <DialogContent className="max-w-7xl border-none bg-transparent p-0 shadow-none">
+                    <DialogTitle className="sr-only">
+                        Scene {sceneNumber} Full Screen View
+                    </DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Full screen view of the scene image
+                    </DialogDescription>
+                    <div className="relative h-[85vh] w-full overflow-hidden rounded-lg">
+                        <GcsImage
+                            gcsUri={scene.imageGcsUri || null}
+                            alt={scene.description || `Scene ${sceneNumber}`}
+                            className="h-full w-full object-contain"
+                            priority
+                            sizes="100vw"
+                        />
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 });

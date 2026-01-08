@@ -1,7 +1,7 @@
 "use server";
 
 import { createPartFromUri, createPartFromText, Part } from "@google/genai";
-import { generateImage } from "@/lib/api/gemini";
+import { generateImage, upscaleImage } from "@/lib/api/gemini";
 import yaml from "js-yaml";
 import { Scenario, ImagePrompt, Entity } from "@/app/types";
 import logger from "@/app/logger";
@@ -59,6 +59,8 @@ export async function generateImageForScenario({
         }
 
         const content: Part[] = [];
+
+        logger.debug(`generateImageForScenario : ${modelName}`);
 
         // Add style image if available as a reference
         if (scenario.styleImageUri) {
@@ -184,10 +186,10 @@ export async function generateImageForScenario({
         const result = await generateImage(
             content,
             {
-                responseModalities: ["IMAGE"],
-                candidateCount: 1,
+                responseModalities: ["IMAGE"], 
                 imageConfig: {
                     aspectRatio: targetAspectRatio,
+                    imageSize: "2K",
                 },
             },
             modelName,
@@ -196,6 +198,8 @@ export async function generateImageForScenario({
         if (!result.success) {
             throw new Error(result.errorMessage || "Failed to generate image");
         }
+
+        logger.debug("Generated image: " + result.imageGcsUri);
 
         return { imageGcsUri: result.imageGcsUri! };
     } catch (error) {

@@ -3,6 +3,7 @@ import {
     GenerateContentConfig,
     GoogleGenAI,
     ThinkingLevel,
+    UpscaleImageConfig,
 } from "@google/genai";
 import { v4 as uuidv4 } from "uuid";
 import { uploadImage } from "@/lib/storage/storage";
@@ -79,7 +80,6 @@ export async function generateImage(
     prompt: ContentListUnion,
     config: GenerateContentConfig = {
         responseModalities: ["IMAGE"],
-        candidateCount: 1,
     },
     model: string = DEFAULT_SETTINGS.imageModel,
 ): Promise<GenerateNanoBananaImageResponse> {
@@ -129,6 +129,68 @@ export async function generateImage(
             onRetry: (attempt, error, delay) => {
                 logger.warn(
                     `Attempt ${attempt} failed for generateImage. Retrying in ${Math.round(delay)}ms...`,
+                    error,
+                );
+            },
+        },
+    );
+}
+
+export async function upscaleImage(
+    imageGcsUri: string,
+    upscaleFactor: "x2" | "x3" | "x4" = "x2",
+    config: UpscaleImageConfig = {
+        outputGcsUri: env.GCS_VIDEOS_STORAGE_URI,
+        outputMimeType: "image/png",
+        includeRaiReason: true,
+        enhanceInputImage: true,
+        imagePreservationFactor: 1.0,
+    },
+    model: string = "imagen-4.0-upscale-preview",
+): Promise<GenerateNanoBananaImageResponse> {
+    return withRetry(
+        async () => {
+            logger.debug("Upscale Image : " + model);
+            logger.debug("Config : " + JSON.stringify(config, null, 2));
+            const response = await ai.models.upscaleImage({
+                model,
+                image: {
+                    gcsUri: imageGcsUri,
+                    mimeType: "image/png",
+                },
+                upscaleFactor,
+                config,
+            });
+
+            if (
+                !response.generatedImages ||
+                response.generatedImages.length === 0
+            ) {
+                console.error("[SERVER] No generated images in response");
+                return {
+                    success: false,
+                    errorMessage: "No candidates found in the response.",
+                };
+            }
+
+            const candidate = response.generatedImages[0];
+            if (!candidate.image || !candidate.image.gcsUri) {
+                console.error("[SERVER] No image in response");
+                return {
+                    success: false,
+                    errorMessage: "No content parts in response",
+                };
+            }
+
+            const upscaledImageGcsUri = candidate.image.gcsUri;
+            // If we reach here, no inlineData was found but no error occurred, so break retry loop.
+            return { success: true, imageGcsUri: upscaledImageGcsUri };
+        },
+        {
+            maxRetries: 5,
+            onRetry: (attempt, error, delay) => {
+                logger.warn(
+                    `Attempt ${attempt} failed for upscaleImage. Retrying in ${Math.round(delay)}ms...`,
                     error,
                 );
             },

@@ -1,6 +1,6 @@
 import { Scene, Scenario } from "@/app/types";
 import { videoPromptToString } from "@/lib/utils/prompt-utils";
-import { generateSceneVideo, waitForOperation } from "@/lib/api/veo";
+import { generateSceneVideo } from "@/lib/api/veo";
 import pLimit from "p-limit";
 
 import logger from "@/app/logger";
@@ -113,7 +113,10 @@ export const POST = withAuth(async (req, { userId }) => {
                                       scenario as Scenario,
                                   );
                         logger.debug(promptString);
-                        const operationName = await generateSceneVideo(
+                        logger.debug(
+                            `Operation started for scene ${index + 1}`,
+                        );
+                        const generateVideoResponse = await generateSceneVideo(
                             promptString,
                             scene.imageGcsUri!,
                             aspectRatio,
@@ -124,33 +127,30 @@ export const POST = withAuth(async (req, { userId }) => {
                             durationSeconds,
                         );
                         logger.debug(
-                            `Operation started for scene ${index + 1}`,
-                        );
-
-                        const generateVideoResponse = await waitForOperation(
-                            operationName,
-                            model || DEFAULT_SETTINGS.videoModel,
-                        );
-                        logger.debug(
                             `Video generation completed for scene ${index + 1}`,
                         );
                         logger.debug(generateVideoResponse);
 
-                        if (
-                            generateVideoResponse.response
-                                .raiMediaFilteredReasons
-                        ) {
+                        if (generateVideoResponse.raiMediaFilteredReasons) {
                             // Throw an error with the determined user-friendly message
                             throw new Error(
                                 getRAIUserMessage(
-                                    generateVideoResponse.response
+                                    generateVideoResponse
                                         .raiMediaFilteredReasons[0],
                                 ),
                             );
                         }
-
-                        const gcsUri =
-                            generateVideoResponse.response.videos[0].gcsUri;
+                        const videos = generateVideoResponse.generatedVideos;
+                        if (!videos || videos.length === 0) {
+                            console.log(
+                                JSON.stringify(generateVideoResponse, null, 2),
+                            );
+                            throw new Error("No videos generated");
+                        }
+                        const gcsUri = videos[0]?.video?.uri;
+                        if (!gcsUri) {
+                            throw new Error("No video URI generated");
+                        }
                         url = gcsUri;
                     }
                     logger.debug(`Video Generated! ${url}`);

@@ -3,6 +3,7 @@ import { z } from "zod";
 const envSchema = z.object({
     // Google Cloud
     PROJECT_ID: z.string().min(1),
+    LOCATION: z.string().min(1),
     GCS_VIDEOS_STORAGE_URI: z.string().min(1),
     FIRESTORE_DATABASE_ID: z.string().optional(),
 
