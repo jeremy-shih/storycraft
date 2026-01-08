@@ -916,7 +916,6 @@ export function MediabunnyPlayer({
                     onEnded={handleVideoEnded}
                     onError={handleVideoError}
                     playsInline
-                    muted
                     preload="auto"
                 />
 
@@ -932,7 +931,6 @@ export function MediabunnyPlayer({
                     onEnded={handleVideoEnded}
                     onError={handleVideoError}
                     playsInline
-                    muted
                     preload="auto"
                 />
 

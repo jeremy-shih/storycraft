@@ -8,7 +8,6 @@ import {
     Upload,
     Video,
     Trash2,
-    GripVertical,
     MessageCircle,
 } from "lucide-react";
 import { useRef, useState, memo } from "react";
@@ -87,21 +86,7 @@ export const SceneCard = memo(function SceneCard({
             onDrop={onDrop}
         >
             {/* Helper for Dragging - only visible on hover */}
-            {!hideControls && (
-                <div className="absolute top-3 left-3 z-20 opacity-0 transition-opacity group-hover:opacity-100">
-                    <div
-                        className="hover:bg-primary/80 cursor-grab rounded-full bg-black/40 p-2 text-white backdrop-blur-md active:cursor-grabbing"
-                        title="Drag to reorder"
-                        onMouseDown={(e) => e.stopPropagation()}
-                        role="button"
-                        tabIndex={0}
-                        aria-label="Drag to reorder"
-                    >
-                        <GripVertical className="h-4 w-4" />
-                    </div>
-                </div>
-            )}
-
+            
             {/* Media Area */}
             <div className="bg-muted/20 relative aspect-[16/9] w-full overflow-hidden rounded-t-[20px]">
                 {isGenerating && (
@@ -126,7 +111,7 @@ export const SceneCard = memo(function SceneCard({
 
                 {/* Overlay Actions */}
                 {!hideControls && (
-                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                    <div className="absolute inset-x-0 top-0 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent p-3 opacity-0 transition-all duration-300 group-hover:opacity-100">
                         <div className="flex gap-2">
                             <Button
                                 size="icon"
