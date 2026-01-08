@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    distDir:
+        process.env.NEXT_PUBLIC_E2E_MOCK_AUTH === "true"
+            ? ".next-e2e"
+            : ".next",
     experimental: {
         serverActions: {
             bodySizeLimit: 10 * 1024 * 1024, // Changed from maxRequestBodySize to bodySizeLimit

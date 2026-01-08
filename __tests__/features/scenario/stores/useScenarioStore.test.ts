@@ -38,18 +38,20 @@ describe("useScenarioStore", () => {
     it("should have initial state", () => {
         const state = useScenarioStore.getState();
         expect(state.currentScenarioId).toBeNull();
-        expect(state.pitch).toBe("");
-        expect(state.style).toBe("Photographic");
-        expect(state.scenario).toBeUndefined();
+        expect(state.scenario.pitch).toBe("");
+        expect(state.scenario.style).toBe("Photographic");
+        expect(state.scenario).toBeDefined();
     });
 
-    it("should update fields using setField", () => {
-        useScenarioStore.getState().setField("name", "Test Scenario");
-        useScenarioStore.getState().setField("durationSeconds", 15);
+    it("should update scenario fields using updateScenario", () => {
+        useScenarioStore.getState().updateScenario({
+            name: "Test Scenario",
+            durationSeconds: 15,
+        });
 
         const state = useScenarioStore.getState();
-        expect(state.name).toBe("Test Scenario");
-        expect(state.durationSeconds).toBe(15);
+        expect(state.scenario.name).toBe("Test Scenario");
+        expect(state.scenario.durationSeconds).toBe(15);
     });
 
     it("should set scenario", () => {
@@ -69,12 +71,12 @@ describe("useScenarioStore", () => {
     });
 
     it("should reset to initial state", () => {
-        useScenarioStore.getState().setField("name", "Modified");
+        useScenarioStore.getState().updateScenario({ name: "Modified" });
         useScenarioStore.getState().setErrorMessage("Some error");
         useScenarioStore.getState().reset();
 
         const state = useScenarioStore.getState();
-        expect(state.name).toBe("");
+        expect(state.scenario.name).toBe("");
         expect(state.errorMessage).toBeNull();
     });
 });

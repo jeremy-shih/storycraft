@@ -17,6 +17,10 @@ const envSchema = z.object({
         .enum(["development", "production", "test"])
         .default("development"),
     LOG_LEVEL: z.string().default("info"),
+    NEXT_PUBLIC_E2E_MOCK_AUTH: z
+        .string()
+        .optional()
+        .transform((v) => v === "true"),
 });
 
 // Use safeParse to avoid crashing during build time if env vars are missing

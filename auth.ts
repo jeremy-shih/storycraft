@@ -70,6 +70,27 @@ export const authConfig = {
                 },
             },
         }),
+        ...(process.env.NEXT_PUBLIC_E2E_MOCK_AUTH === "true"
+            ? [
+                  {
+                      id: "credentials",
+                      name: "Credentials",
+                      type: "credentials",
+                      credentials: {
+                          username: { label: "Username", type: "text" },
+                      },
+                      async authorize() {
+                          return {
+                              id: "test-user-id",
+                              name: "Test User",
+                              email: "test@example.com",
+                              image: "https://avatar.vercel.sh/test",
+                          };
+                      },
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  } as any,
+              ]
+            : []),
     ],
 } satisfies NextAuthConfig;
 

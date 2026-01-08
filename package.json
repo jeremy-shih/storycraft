@@ -11,7 +11,7 @@
         "test": "vitest run",
         "test:ui": "vitest --ui",
         "test:coverage": "vitest --coverage",
-        "test:e2e": "playwright test",
+        "test:e2e": "NEXT_PUBLIC_E2E_MOCK_AUTH=true playwright test",
         "check": "npx tsc --noEmit",
         "preflight": "npm run format && npm run check && npm run lint && npm run test"
     },
