@@ -54,10 +54,24 @@ export function StyleSelector({
                 setPreviewUrl(url);
             } else {
                 setPreviewUrl(null);
+                // Reset custom text if image is cleared
+                setCustomStyleText("");
             }
         };
         resolveUrl();
     }, [styleImageUri]);
+
+    // Sync custom text with currentStyle if it's a custom style
+    useEffect(() => {
+        const isPreset = styles.some((s) => s.name === currentStyle);
+        if (isPreset) {
+            setCustomStyleText("");
+        } else if (currentStyle && currentStyle !== "Custom Style") {
+            // If it's not a preset and not the default "Custom Style" label,
+            // it must be the custom description
+            setCustomStyleText(currentStyle);
+        }
+    }, [currentStyle, styles]);
 
     const handleSelect = (style: Style) => {
         onSelect(style.name);

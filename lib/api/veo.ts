@@ -3,7 +3,6 @@ import { DEFAULT_SETTINGS } from "@/lib/ai-config";
 import { GenerateVideosResponse, GoogleGenAI } from "@google/genai";
 import { env } from "@/lib/utils/env";
 
-const LOCATION = env.LOCATION;
 const PROJECT_ID = env.PROJECT_ID;
 
 // Use a global variable to ensure the client is reused across HMR in development

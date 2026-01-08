@@ -69,7 +69,15 @@ export const useScenarioStore = create<ScenarioState>()(
 
                 setField: (field, value) =>
                     set(
-                        (state) => ({ ...state, [field]: value }),
+                        (state) => ({
+                            ...state,
+                            [field]: value,
+                            // Sync with nested scenario object if it exists to trigger auto-save
+                            scenario:
+                                state.scenario && field in state.scenario
+                                    ? { ...state.scenario, [field]: value }
+                                    : state.scenario,
+                        }),
                         false,
                         `set_${field}`,
                     ),

@@ -54,6 +54,7 @@ export function useSidebarActions() {
             validateDuration(selectedScenario.durationSeconds || 8),
         );
         setField("logoOverlay", selectedScenario.logoOverlay || null);
+        setField("styleImageUri", selectedScenario.styleImageUri || null);
 
         const allScenesHaveVideos =
             selectedScenario.scenes &&

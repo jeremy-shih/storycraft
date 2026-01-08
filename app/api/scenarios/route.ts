@@ -72,6 +72,7 @@ export const POST = withAuth(async (request, { userId }) => {
 
                 return sceneData;
             }),
+            styleImageUri: scenario.styleImageUri || null,
         };
 
         // Add optional fields only if they have values
