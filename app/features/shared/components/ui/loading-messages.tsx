@@ -4,6 +4,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils/utils";
 
+const PHASE_DURATIONS: Record<LoadingPhase, number> = {
+    scenario: 60000, // 1 minute
+    storyboard: 90000, // 1.5 minutes
+    video: 180000, // 3 minutes
+};
+
 const SCENARIO_MESSAGES = [
     "Drinking a digital espresso while staring at a blank page...",
     "Searching for a climax that doesn't involve a giant laser in the sky...",
@@ -193,6 +199,8 @@ export function LoadingMessages({
     // Initialize with a random index using a function to avoid the lint warning
     const [currentMessageIndex, setCurrentMessageIndex] =
         useState(getRandomIndex);
+    const [progress, setProgress] = useState(0);
+    const [isTimeout, setIsTimeout] = useState(false);
     const wasLoadingRef = useRef(isLoading);
 
     // Memoized function to advance to the next message
@@ -203,9 +211,11 @@ export function LoadingMessages({
     useEffect(() => {
         // When transitioning from not loading to loading, reset to random index
         if (isLoading && !wasLoadingRef.current) {
-            // Use setTimeout to avoid synchronous setState warning if needed
+            // Use setTimeout to avoid synchronous setState warning
             const timer = setTimeout(() => {
                 setCurrentMessageIndex(getRandomIndex());
+                setProgress(0);
+                setIsTimeout(false);
             }, 0);
             wasLoadingRef.current = true;
             return () => clearTimeout(timer);
@@ -213,6 +223,10 @@ export function LoadingMessages({
 
         if (!isLoading && wasLoadingRef.current) {
             wasLoadingRef.current = false;
+            setTimeout(() => {
+                setProgress(0);
+                setIsTimeout(false);
+            }, 0);
         }
     }, [isLoading, getRandomIndex]);
 
@@ -223,27 +237,83 @@ export function LoadingMessages({
         return () => clearInterval(interval);
     }, [isLoading, advanceMessage]);
 
+    useEffect(() => {
+        if (!isLoading) return;
+
+        const duration = PHASE_DURATIONS[phase];
+        let frameId: number;
+        const start = Date.now();
+
+        const updateProgress = () => {
+            const elapsed = Date.now() - start;
+            const nextProgress = Math.min((elapsed / duration) * 100, 100);
+
+            setProgress(nextProgress);
+
+            if (nextProgress < 100) {
+                frameId = requestAnimationFrame(updateProgress);
+            } else {
+                setIsTimeout(true);
+            }
+        };
+
+        frameId = requestAnimationFrame(updateProgress);
+        return () => cancelAnimationFrame(frameId);
+    }, [isLoading, phase]);
+
     return (
         <div
             className={cn(
-                "flex min-h-6 items-center justify-center overflow-hidden",
+                "flex flex-col items-center justify-center gap-4 py-4",
                 className,
             )}
         >
-            <AnimatePresence mode="wait">
-                {isLoading && (
-                    <motion.p
-                        key={currentMessageIndex}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.5 }}
-                        className="text-muted-foreground max-w-[500px] text-center text-sm leading-relaxed italic"
-                    >
-                        {messages[currentMessageIndex]}
-                    </motion.p>
-                )}
-            </AnimatePresence>
+            {isLoading && (
+                <div className="flex w-[400px] flex-col items-center gap-2">
+                    {isTimeout ? (
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-primary text-sm font-bold"
+                        >
+                            It&apos;s a bit long, isn&apos;t it?
+                        </motion.p>
+                    ) : (
+                        <div className="flex w-full items-center gap-3">
+                            <div className="bg-secondary/30 h-1.5 flex-1 overflow-hidden rounded-full">
+                                <motion.div
+                                    className="bg-primary h-full"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${progress}%` }}
+                                    transition={{
+                                        type: "spring",
+                                        bounce: 0,
+                                        duration: 0.1,
+                                    }}
+                                />
+                            </div>
+                            <span className="text-muted-foreground w-10 text-right text-xs font-medium tabular-nums">
+                                {Math.round(progress)}%
+                            </span>
+                        </div>
+                    )}
+
+                    <div className="flex min-h-6 items-center justify-center overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            <motion.p
+                                key={currentMessageIndex}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.5 }}
+                                className="text-muted-foreground max-w-[500px] text-center text-sm leading-relaxed italic"
+                            >
+                                {messages[currentMessageIndex]}
+                            </motion.p>
+                        </AnimatePresence>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

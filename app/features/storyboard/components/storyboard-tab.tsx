@@ -82,7 +82,7 @@ export const StoryboardTab = React.memo(function StoryboardTab() {
             <div
                 className={cn(
                     "space-y-8 pb-10 transition-all duration-500",
-                    (isVideoLoading || isAnySceneGenerating) &&
+                    isVideoLoading &&
                         "pointer-events-none opacity-40 blur-[2px]",
                 )}
             >
@@ -107,7 +107,7 @@ export const StoryboardTab = React.memo(function StoryboardTab() {
             </div>
 
             <AnimatePresence>
-                {(isVideoLoading || isAnySceneGenerating) && (
+                {isVideoLoading && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -124,9 +124,7 @@ export const StoryboardTab = React.memo(function StoryboardTab() {
                                     Bringing it to life
                                 </h3>
                                 <LoadingMessages
-                                    isLoading={
-                                        isVideoLoading || isAnySceneGenerating
-                                    }
+                                    isLoading={isVideoLoading}
                                     phase="video"
                                     className="h-auto justify-center"
                                 />
