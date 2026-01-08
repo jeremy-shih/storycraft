@@ -16,14 +16,10 @@ import { useImageUpload } from "@/app/features/shared/hooks/use-image-upload";
 import { toast } from "sonner";
 
 export function useScenarioActions() {
-    const {
-        scenario,
-        numScenes,
-        style,
-        language,
-        setScenario,
-        setErrorMessage,
-    } = useScenarioStore();
+    const { scenario, numScenes, setScenario, setErrorMessage } =
+        useScenarioStore();
+
+    const { style, language } = scenario;
 
     const { setLoading, startLoading, stopLoading } = useLoadingStore();
     const { setActiveTab } = useEditorStore();

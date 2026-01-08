@@ -91,13 +91,13 @@ export const scenarioSchema: z.ZodType<Scenario> = z.object({
     genre: z.string(),
     mood: z.string(),
     music: z.string(),
-    musicUrl: z.string().optional(),
+    musicUrl: z.string().nullish(),
     language: languageSchema,
     characters: z.array(characterSchema).default([]),
     settings: z.array(settingSchema).default([]),
     props: z.array(propSchema).default([]),
-    logoOverlay: z.string().optional(),
-    styleImageUri: z.string().optional(),
+    logoOverlay: z.string().nullish(),
+    styleImageUri: z.string().nullish(),
     scenes: z.array(sceneSchema).default([]),
 });
 

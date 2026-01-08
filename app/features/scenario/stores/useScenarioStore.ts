@@ -12,20 +12,12 @@ interface ScenarioState {
     currentScenarioId: string | null;
     isScenarioLoading: boolean;
 
-    // Form fields
-    pitch: string;
-    name: string;
-    style: string;
-    aspectRatio: string;
-    durationSeconds: number;
-    language: Language;
-    styleImageUri: string | null;
-    logoOverlay: string | null;
+    // Transient Form state (not in Scenario interface)
     numScenes: number;
     withVoiceOver: boolean;
 
-    // Result
-    scenario: Scenario | undefined;
+    // Source of Truth
+    scenario: Scenario;
     errorMessage: string | null;
     videoUri: string | null;
     vttUri: string | null;
@@ -35,6 +27,7 @@ interface ScenarioState {
         field: K,
         value: ScenarioState[K],
     ) => void;
+    updateScenario: (updates: Partial<Scenario>) => void;
     setScenario: (scenario: Scenario | undefined) => void;
     setErrorMessage: (message: string | null) => void;
     setVideoUri: (uri: string | null) => void;
@@ -42,20 +35,29 @@ interface ScenarioState {
     reset: () => void;
 }
 
-const initialState = {
-    currentScenarioId: null,
-    isScenarioLoading: false,
-    pitch: "",
+const initialScenario: Scenario = {
     name: "",
+    pitch: "",
+    scenario: "",
     style: "Photographic",
     aspectRatio: "16:9",
     durationSeconds: 8,
+    genre: "",
+    mood: "",
+    music: "",
     language: DEFAULT_LANGUAGE,
-    styleImageUri: null,
-    logoOverlay: null,
+    characters: [],
+    settings: [],
+    props: [],
+    scenes: [],
+};
+
+const initialState = {
+    currentScenarioId: null,
+    isScenarioLoading: false,
     numScenes: 6,
     withVoiceOver: false,
-    scenario: undefined,
+    scenario: initialScenario,
     errorMessage: null,
     videoUri: null,
     vttUri: null,
@@ -69,26 +71,29 @@ export const useScenarioStore = create<ScenarioState>()(
 
                 setField: (field, value) =>
                     set(
-                        (state) => ({
-                            ...state,
-                            [field]: value,
-                            // Sync with nested scenario object if it exists to trigger auto-save
-                            scenario:
-                                state.scenario && field in state.scenario
-                                    ? { ...state.scenario, [field]: value }
-                                    : state.scenario,
-                        }),
+                        (state) => ({ ...state, [field]: value }),
                         false,
                         `set_${field}`,
                     ),
 
+                updateScenario: (updates) =>
+                    set(
+                        (state) => ({
+                            ...state,
+                            scenario: { ...state.scenario, ...updates },
+                        }),
+                        false,
+                        "updateScenario",
+                    ),
+
                 setScenario: (scenario) =>
                     set(
-                        {
+                        (state) => ({
+                            ...state,
                             scenario: scenario
                                 ? { ...scenario, scenes: scenario.scenes || [] }
-                                : undefined,
-                        },
+                                : initialScenario,
+                        }),
                         false,
                         "setScenario",
                     ),
@@ -107,14 +112,6 @@ export const useScenarioStore = create<ScenarioState>()(
             {
                 name: "scenario-storage",
                 partialize: (state) => ({
-                    pitch: state.pitch,
-                    name: state.name,
-                    style: state.style,
-                    aspectRatio: state.aspectRatio,
-                    durationSeconds: state.durationSeconds,
-                    language: state.language,
-                    styleImageUri: state.styleImageUri,
-                    logoOverlay: state.logoOverlay,
                     numScenes: state.numScenes,
                     withVoiceOver: state.withVoiceOver,
                     scenario: state.scenario,

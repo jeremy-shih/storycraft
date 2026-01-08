@@ -7,49 +7,45 @@ import { type Language } from "@/app/types";
 import { useShallow } from "zustand/react/shallow";
 
 export function useCreateTabState() {
-    const {
-        name,
-        pitch,
-        numScenes,
-        style,
-        aspectRatio,
-        durationSeconds,
-        language,
-        styleImageUri,
-        errorMessage,
-        setField,
-    } = useScenarioStore(
-        useShallow((state) => ({
-            name: state.name,
-            pitch: state.pitch,
-            numScenes: state.numScenes,
-            style: state.style,
-            aspectRatio: state.aspectRatio,
-            durationSeconds: state.durationSeconds,
-            language: state.language,
-            styleImageUri: state.styleImageUri,
-            errorMessage: state.errorMessage,
-            setField: state.setField,
-        })),
-    );
+    const { scenario, numScenes, errorMessage, setField, updateScenario } =
+        useScenarioStore(
+            useShallow((state) => ({
+                scenario: state.scenario,
+                numScenes: state.numScenes,
+                errorMessage: state.errorMessage,
+                setField: state.setField,
+                updateScenario: state.updateScenario,
+            })),
+        );
 
     const { scenario: isLoading } = useLoadingStore(
         useShallow((state) => ({ scenario: state.scenario })),
     );
     const { handleGenerateScenario } = useCreateActions();
 
+    const {
+        name,
+        pitch,
+        style,
+        aspectRatio,
+        durationSeconds,
+        language,
+        styleImageUri,
+    } = scenario;
+
     const totalLength = numScenes * durationSeconds;
 
-    const setName = (val: string) => setField("name", val);
-    const setPitch = (val: string) => setField("pitch", val);
+    const setName = (val: string) => updateScenario({ name: val });
+    const setPitch = (val: string) => updateScenario({ pitch: val });
     const setNumScenes = (val: number) => setField("numScenes", val);
-    const setStyle = (val: string) => setField("style", val);
-    const setAspectRatio = (val: string) => setField("aspectRatio", val);
+    const setStyle = (val: string) => updateScenario({ style: val });
+    const setAspectRatio = (val: string) =>
+        updateScenario({ aspectRatio: val });
     const setDurationSeconds = (val: number) =>
-        setField("durationSeconds", val);
-    const setLanguage = (val: Language) => setField("language", val);
+        updateScenario({ durationSeconds: val });
+    const setLanguage = (val: Language) => updateScenario({ language: val });
     const setStyleImageUri = (val: string | null) =>
-        setField("styleImageUri", val);
+        updateScenario({ styleImageUri: val || undefined });
 
     const canGenerate = pitch.trim() !== "" && name.trim() !== "";
 
@@ -68,7 +64,7 @@ export function useCreateTabState() {
         setDurationSeconds,
         language,
         setLanguage,
-        styleImageUri,
+        styleImageUri: styleImageUri || null,
         setStyleImageUri,
         errorMessage,
         isLoading,

@@ -73,13 +73,9 @@ export const POST = withAuth(async (request, { userId }) => {
                 return sceneData;
             }),
             styleImageUri: scenario.styleImageUri || null,
+            musicUrl: scenario.musicUrl || null,
+            logoOverlay: scenario.logoOverlay || null,
         };
-
-        // Add optional fields only if they have values
-        const firestoreScenario: Record<string, unknown> = { ...baseScenario };
-        if (scenario.musicUrl) firestoreScenario.musicUrl = scenario.musicUrl;
-        if (scenario.logoOverlay)
-            firestoreScenario.logoOverlay = scenario.logoOverlay;
 
         const scenarioRef = firestore.collection("scenarios").doc(id);
 
@@ -96,14 +92,14 @@ export const POST = withAuth(async (request, { userId }) => {
                 // Update existing scenario
                 logger.info(`Updating scenario: ${id}`);
                 transaction.update(scenarioRef, {
-                    ...firestoreScenario,
+                    ...baseScenario,
                     updatedAt: new Date(),
                 });
             } else {
                 // Create new scenario
                 logger.info(`Creating new scenario: ${id}`);
                 transaction.set(scenarioRef, {
-                    ...firestoreScenario,
+                    ...baseScenario,
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 });

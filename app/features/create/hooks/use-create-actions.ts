@@ -9,6 +9,9 @@ import { generateScenario } from "@/app/features/create/actions/generate-scenari
 import { toast } from "sonner";
 
 export function useCreateActions() {
+    const { scenario, numScenes, setScenario, setErrorMessage } =
+        useScenarioStore();
+
     const {
         pitch,
         name,
@@ -18,10 +21,7 @@ export function useCreateActions() {
         language,
         styleImageUri,
         logoOverlay,
-        numScenes,
-        setScenario,
-        setErrorMessage,
-    } = useScenarioStore();
+    } = scenario;
 
     const { setLoading } = useLoadingStore();
     const { setActiveTab } = useEditorStore();

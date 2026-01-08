@@ -93,7 +93,13 @@ export default function Home() {
             return;
         }
 
-        if (scenario && isAuthenticated) {
+        const shouldSave =
+            isAuthenticated &&
+            (scenario.name.trim() !== "" ||
+                scenario.pitch.trim() !== "" ||
+                getCurrentScenarioId());
+
+        if (shouldSave) {
             const currentContent = JSON.stringify(scenario);
             if (currentContent !== lastSavedScenarioRef.current) {
                 lastSavedScenarioRef.current = currentContent;

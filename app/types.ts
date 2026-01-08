@@ -60,13 +60,13 @@ export interface Scenario {
     genre: string;
     mood: string;
     music: string;
-    musicUrl?: string;
+    musicUrl?: string | null;
     language: Language;
     characters: Character[];
     settings: Setting[];
     props: Prop[];
-    logoOverlay?: string;
-    styleImageUri?: string;
+    logoOverlay?: string | null;
+    styleImageUri?: string | null;
     scenes: Scene[];
 }
 
@@ -89,8 +89,8 @@ export interface TimelineItem {
     content: string; // URL for video/music/voiceover
     type: "video" | "voiceover" | "music";
     metadata?: {
-        logoOverlay?: string;
-        [key: string]: string | number | boolean | undefined; // Allow for additional metadata fields
+        logoOverlay?: string | null;
+        [key: string]: string | number | boolean | undefined | null; // Allow for additional metadata fields
     };
 }
 

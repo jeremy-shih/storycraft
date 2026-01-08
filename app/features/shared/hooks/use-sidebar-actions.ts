@@ -3,19 +3,7 @@
 import { useScenarioStore } from "@/app/features/scenario/stores/useScenarioStore";
 import { useEditorStore } from "@/app/features/editor/stores/useEditorStore";
 import { useScenario } from "@/app/features/scenario/hooks/use-scenario";
-import { Scenario, type Language } from "@/app/types";
-
-const DEFAULT_LANGUAGE: Language = {
-    name: "English (United States)",
-    code: "en-US",
-};
-
-const VALID_DURATIONS = [4, 6, 8] as const;
-type ValidDuration = (typeof VALID_DURATIONS)[number];
-
-const validateDuration = (duration: number): number => {
-    return VALID_DURATIONS.includes(duration as ValidDuration) ? duration : 8;
-};
+import { Scenario } from "@/app/types";
 
 export function useSidebarActions() {
     const {
@@ -42,19 +30,7 @@ export function useSidebarActions() {
 
         setField("isScenarioLoading", true);
         setScenario(selectedScenario);
-
-        setField("name", selectedScenario.name || "");
-        setField("pitch", selectedScenario.pitch || "");
-        setField("style", selectedScenario.style || "Photographic");
-        setField("aspectRatio", selectedScenario.aspectRatio || "16:9");
-        setField("language", selectedScenario.language || DEFAULT_LANGUAGE);
         setField("numScenes", selectedScenario.scenes?.length || 6);
-        setField(
-            "durationSeconds",
-            validateDuration(selectedScenario.durationSeconds || 8),
-        );
-        setField("logoOverlay", selectedScenario.logoOverlay || null);
-        setField("styleImageUri", selectedScenario.styleImageUri || null);
 
         const allScenesHaveVideos =
             selectedScenario.scenes &&

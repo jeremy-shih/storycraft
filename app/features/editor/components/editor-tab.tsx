@@ -21,12 +21,12 @@ import { useEditorActions } from "@/app/features/editor/hooks/use-editor-actions
 import { useShallow } from "zustand/react/shallow";
 
 export const EditorTab = memo(function EditorTab() {
-    const { scenario, logoOverlay } = useScenarioStore(
+    const { scenario } = useScenarioStore(
         useShallow((state) => ({
             scenario: state.scenario,
-            logoOverlay: state.logoOverlay,
         })),
     );
+    const logoOverlay = scenario.logoOverlay;
     const scenarioId = scenario?.id || null;
     const { video: isExporting } = useLoadingStore(
         useShallow((state) => ({ video: state.video })),
