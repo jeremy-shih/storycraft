@@ -3,7 +3,6 @@
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Loader2 } from "lucide-react";
-import { LoadingMessages } from "@/app/features/shared/components/ui/loading-messages";
 
 interface ScenarioHeaderProps {
     isLoading: boolean;
@@ -25,7 +24,6 @@ export const ScenarioHeader = memo(function ScenarioHeader({
                 </p>
             </div>
             <div className="flex items-center gap-4">
-                <LoadingMessages isLoading={isLoading} phase="storyboard" />
                 <Button
                     size="lg"
                     onClick={onGenerateStoryboard}

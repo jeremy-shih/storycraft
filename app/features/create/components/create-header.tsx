@@ -3,7 +3,6 @@
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Loader2 } from "lucide-react";
-import { LoadingMessages } from "@/app/features/shared/components/ui/loading-messages";
 
 interface CreateHeaderProps {
     isLoading: boolean;
@@ -27,7 +26,6 @@ export const CreateHeader = memo(function CreateHeader({
                 </p>
             </div>
             <div className="flex items-center gap-4">
-                <LoadingMessages isLoading={isLoading} phase="scenario" />
                 <Button
                     size="lg"
                     onClick={onGenerate}

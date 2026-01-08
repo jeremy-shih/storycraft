@@ -11,7 +11,6 @@ import {
     Video,
     Image as ImageIcon,
 } from "lucide-react";
-import { LoadingMessages } from "@/app/features/shared/components/ui/loading-messages";
 
 export type ViewMode = "grid" | "list" | "slideshow";
 export type DisplayMode = "image" | "video";
@@ -49,10 +48,6 @@ export const StoryboardHeader = memo(function StoryboardHeader({
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <LoadingMessages
-                        isLoading={isVideoLoading || isAnySceneGenerating}
-                        phase="video"
-                    />
                     <Button
                         size="lg"
                         onClick={onGenerateAllVideos}

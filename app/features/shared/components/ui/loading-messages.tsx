@@ -226,7 +226,7 @@ export function LoadingMessages({
     return (
         <div
             className={cn(
-                "flex h-6 items-center justify-end overflow-hidden",
+                "flex min-h-6 items-center justify-center overflow-hidden",
                 className,
             )}
         >
@@ -238,7 +238,7 @@ export function LoadingMessages({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.5 }}
-                        className="text-muted-foreground max-w-[500px] text-sm italic"
+                        className="text-muted-foreground max-w-[500px] text-center text-sm leading-relaxed italic"
                     >
                         {messages[currentMessageIndex]}
                     </motion.p>

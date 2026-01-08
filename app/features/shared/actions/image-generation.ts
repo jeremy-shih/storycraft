@@ -1,7 +1,7 @@
 "use server";
 
 import { createPartFromUri, createPartFromText, Part } from "@google/genai";
-import { generateImage, upscaleImage } from "@/lib/api/gemini";
+import { generateImage } from "@/lib/api/gemini";
 import yaml from "js-yaml";
 import { Scenario, ImagePrompt, Entity } from "@/app/types";
 import logger from "@/app/logger";
@@ -186,7 +186,7 @@ export async function generateImageForScenario({
         const result = await generateImage(
             content,
             {
-                responseModalities: ["IMAGE"], 
+                responseModalities: ["IMAGE"],
                 imageConfig: {
                     aspectRatio: targetAspectRatio,
                     imageSize: "2K",
