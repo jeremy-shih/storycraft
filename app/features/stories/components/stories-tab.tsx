@@ -242,7 +242,7 @@ export function StoriesTab({
                                     </CardTitle>
                                     <CardDescription className="mt-1">
                                         {scenario.style && (
-                                            <span className="bg-primary/10 text-primary mr-2 inline-block rounded-full px-2 py-1 text-xs">
+                                            <span className="bg-primary/10 text-primary mr-2 inline-block max-w-[150px] truncate rounded-full px-2 py-1 text-xs">
                                                 {scenario.style}
                                             </span>
                                         )}

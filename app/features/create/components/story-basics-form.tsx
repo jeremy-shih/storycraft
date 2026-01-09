@@ -133,7 +133,7 @@ export function StoryBasicsForm({
                         value={pitch}
                         onChange={(e) => setPitch(e.target.value)}
                         placeholder="Love at the Google Cloud conference..."
-                        className="min-h-[140px] resize-none bg-gray-50/50 dark:bg-gray-900/50"
+                        className="min-h-[140px] resize-y bg-gray-50/50 dark:bg-gray-900/50"
                     />
                 </div>
 

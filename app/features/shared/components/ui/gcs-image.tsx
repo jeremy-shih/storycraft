@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { clientLogger } from "@/lib/utils/client-logger";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -23,8 +23,10 @@ export const GcsImage = memo(function GcsImage({
     sizes,
     priority = false,
 }: GcsImageProps) {
+    const [retryCount, setRetryCount] = useState(0);
+
     const { data: imageData, isLoading } = useQuery({
-        queryKey: ["image", gcsUri],
+        queryKey: ["image", gcsUri, retryCount],
         queryFn: async () => {
             if (!gcsUri) {
                 return null;
@@ -34,8 +36,9 @@ export const GcsImage = memo(function GcsImage({
                 return null;
             }
             try {
+                const refresh = retryCount > 0;
                 const response = await fetch(
-                    `/api/media?uri=${encodeURIComponent(gcsUri)}`,
+                    `/api/media?uri=${encodeURIComponent(gcsUri)}${refresh ? "&refresh=true" : ""}`,
                 );
                 if (!response.ok) {
                     throw new Error(
@@ -52,10 +55,11 @@ export const GcsImage = memo(function GcsImage({
         enabled: !!gcsUri,
         // prevent infinite loop if backend error
         retry: (failureCount, error) => {
-            if (error.message.includes("400")) return false;
+            if (error instanceof Error && error.message.includes("400"))
+                return false;
             return failureCount < 2;
         },
-        staleTime: 60 * 1000 * 10, // 10 minutes to match API cache
+        staleTime: retryCount > 0 ? 0 : 60 * 1000 * 10, // 10 minutes to match API cache, 0 if retrying
     });
 
     const imageUrl = imageData?.url || null;
@@ -103,9 +107,17 @@ export const GcsImage = memo(function GcsImage({
                 sizes={sizes}
                 priority={priority}
                 onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/placeholder.svg";
-                    target.onerror = null; // Prevent infinite loop
+                    if (retryCount < 1) {
+                        clientLogger.warn(
+                            "Image failed to load, retrying with refresh...",
+                            gcsUri,
+                        );
+                        setRetryCount((prev) => prev + 1);
+                    } else {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "/placeholder.svg";
+                        target.onerror = null; // Prevent infinite loop
+                    }
                 }}
             />
         </div>

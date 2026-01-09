@@ -10,6 +10,7 @@ export const GET = withAuth(async (req) => {
     const { searchParams } = new URL(req.url);
     const gcsUri = searchParams.get("uri");
     const download = searchParams.get("download") === "true";
+    const refresh = searchParams.get("refresh") === "true";
 
     if (!gcsUri) {
         return errorResponse("Missing uri", "VALIDATION_ERROR", 400);
@@ -17,7 +18,7 @@ export const GET = withAuth(async (req) => {
 
     // Validate using existing schema
     const validation = validateInput(
-        { gcsUri, download },
+        { gcsUri, download, refresh },
         getDynamicImageUrlSchema,
         "Invalid URI format",
     );
@@ -27,7 +28,7 @@ export const GET = withAuth(async (req) => {
     }
 
     try {
-        const result = await getDynamicImageUrl(gcsUri, download);
+        const result = await getDynamicImageUrl(gcsUri, download, refresh);
 
         return NextResponse.json(result, {
             headers: {

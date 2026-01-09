@@ -191,6 +191,7 @@ export const uploadImageToGCSSchema = z.object({
 export const getDynamicImageUrlSchema = z.object({
     gcsUri: z.string().startsWith("gs://"),
     download: z.boolean().optional(),
+    refresh: z.boolean().optional(),
 });
 
 export const saveImageToPublicSchema = z.object({

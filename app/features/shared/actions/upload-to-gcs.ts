@@ -25,18 +25,19 @@ import { validateActionInput } from "@/lib/utils/validation";
 export async function getDynamicImageUrl(
     gcsUri: string,
     download: boolean = false,
+    refresh: boolean = false,
 ): Promise<{ url: string; mimeType: string }> {
     await requireAuth();
     validateActionInput(
-        { gcsUri, download },
+        { gcsUri, download, refresh },
         getDynamicImageUrlSchema,
         "Validation error in getDynamicImageUrl",
     );
 
     // Call the cached function
-    logger.debug(`getDynamicImageUrl: ${gcsUri}`);
+    logger.debug(`getDynamicImageUrl: ${gcsUri} (refresh: ${refresh})`);
 
-    return cache(
+    const cacheFn = cache(
         async (
             uri: string,
             dl: boolean,
@@ -70,9 +71,24 @@ export async function getDynamicImageUrl(
         ["gcs-signed-url", gcsUri, String(download)], // Unique key per URI and download flag
         {
             revalidate: 60 * 45, // Revalidate every 45 minutes (2700 seconds) - Leaves 15m buffer with 60m expiry
-            tags: ["gcs-url"],
+            tags: ["gcs-url", gcsUri],
         },
-    )(gcsUri, download);
+    );
+
+    if (refresh) {
+        // When refreshing, we want to bypass the cache.
+        logger.debug(`Refreshing signed URL for ${gcsUri} (bypassing cache)`);
+        const mimeType = await getMimeTypeFromGCS(gcsUri);
+        const url = await getSignedUrlFromGCS(gcsUri, download);
+
+        if (!mimeType || !url) {
+            throw new Error("Failed to refresh signed URL or mime type");
+        }
+
+        return { url, mimeType };
+    }
+
+    return cacheFn(gcsUri, download);
 }
 
 export async function uploadImageToGCS(base64: string): Promise<string | null> {
