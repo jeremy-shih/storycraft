@@ -4,11 +4,18 @@ import {
     LLM_OPTIONS,
     IMAGE_MODEL_OPTIONS,
     VIDEO_MODEL_OPTIONS,
+    VIDEO_RESOLUTION_OPTIONS,
     DEFAULT_SETTINGS,
     type Settings,
 } from "@/lib/ai-config";
 
-export { LLM_OPTIONS, IMAGE_MODEL_OPTIONS, VIDEO_MODEL_OPTIONS, type Settings };
+export {
+    LLM_OPTIONS,
+    IMAGE_MODEL_OPTIONS,
+    VIDEO_MODEL_OPTIONS,
+    VIDEO_RESOLUTION_OPTIONS,
+    type Settings,
+};
 
 const STORAGE_KEY = "storycraft-settings";
 

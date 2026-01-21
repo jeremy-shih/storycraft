@@ -121,6 +121,7 @@ export function useStoryboardActions() {
                                     aspectRatio: scenario?.aspectRatio,
                                     model: targetModel,
                                     generateAudio: targetAudio,
+                                    resolution: settings.videoResolution,
                                     durationSeconds: scenario?.durationSeconds,
                                 }),
                             });
@@ -191,6 +192,7 @@ export function useStoryboardActions() {
                     aspectRatio: scenario?.aspectRatio,
                     model: settings.videoModel,
                     generateAudio: settings.generateAudio,
+                    resolution: settings.videoResolution,
                     durationSeconds: scenario?.durationSeconds,
                 }),
             });

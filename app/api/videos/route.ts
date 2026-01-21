@@ -58,6 +58,7 @@ export const POST = withAuth(async (req, { userId }) => {
             model,
             generateAudio,
             durationSeconds,
+            resolution,
         } = validation.data;
 
         // Verify ownership if scenario has an ID
@@ -71,6 +72,7 @@ export const POST = withAuth(async (req, { userId }) => {
         logger.debug("Generating videos in parallel...");
         logger.debug(`model: ${model}`);
         logger.debug(`generateAudio: ${generateAudio}`);
+        logger.debug(`resolution: ${resolution}`);
         logger.debug(`scenes: ${scenes}`);
         logger.debug(`durationSeconds: ${durationSeconds}`);
 
@@ -125,6 +127,7 @@ export const POST = withAuth(async (req, { userId }) => {
                                 ? generateAudio
                                 : DEFAULT_SETTINGS.generateAudio,
                             durationSeconds,
+                            resolution || DEFAULT_SETTINGS.videoResolution,
                         );
                         logger.debug(
                             `Video generation completed for scene ${index + 1}`,

@@ -44,44 +44,35 @@ export const IMAGE_MODEL_OPTIONS = [
 
 export const VIDEO_MODEL_OPTIONS = [
     {
-        label: "Veo 3.1 Preview Fast 🔈",
-        modelName: "veo-3.1-fast-generate-preview",
-        generateAudio: true,
-    },
-    {
         label: "Veo 3.1 Preview Fast",
         modelName: "veo-3.1-fast-generate-preview",
-        generateAudio: false,
-    },
-    {
-        label: "Veo 3.1 🔈",
-        modelName: "veo-3.1-generate-preview",
-        generateAudio: true,
     },
     {
         label: "Veo 3.1",
         modelName: "veo-3.1-generate-preview",
-        generateAudio: false,
-    },
-    {
-        label: "Veo 3.0 Fast 🔈",
-        modelName: "veo-3.0-fast-generate-001",
-        generateAudio: true,
     },
     {
         label: "Veo 3.0 Fast",
         modelName: "veo-3.0-fast-generate-001",
-        generateAudio: false,
-    },
-    {
-        label: "Veo 3.0 🔈",
-        modelName: "veo-3.0-generate-001",
-        generateAudio: true,
     },
     {
         label: "Veo 3.0",
         modelName: "veo-3.0-generate-001",
-        generateAudio: false,
+    },
+] as const;
+
+export const VIDEO_RESOLUTION_OPTIONS = [
+    {
+        label: "720p",
+        value: "720p",
+    },
+    {
+        label: "1080p",
+        value: "1080p",
+    },
+    {
+        label: "4K",
+        value: "4k",
     },
 ] as const;
 
@@ -90,6 +81,7 @@ export interface Settings {
     thinkingBudget: number;
     imageModel: string;
     videoModel: string;
+    videoResolution: string;
     generateAudio: boolean;
 }
 
@@ -98,5 +90,6 @@ export const DEFAULT_SETTINGS: Settings = {
     thinkingBudget: 0,
     imageModel: "gemini-3-pro-image-preview",
     videoModel: "veo-3.1-fast-generate-preview",
+    videoResolution: "1080p",
     generateAudio: false,
 };

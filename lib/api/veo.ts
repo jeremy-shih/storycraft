@@ -31,9 +31,10 @@ export async function generateSceneVideo(
     model: string = DEFAULT_SETTINGS.videoModel,
     generateAudio: boolean = DEFAULT_SETTINGS.generateAudio,
     durationSeconds: number = 8,
+    resolution: string = "1080p",
 ): Promise<GenerateVideosResponse> {
     const modifiedPrompt = prompt + "\nSubtitles: off";
-    logger.debug(model);
+    logger.debug(`generateSceneVideo {model: ${model}, prompt: ${modifiedPrompt}, resolution: ${resolution}}`);
 
     let operation = await ai.models.generateVideos({
         model: model,
@@ -49,7 +50,7 @@ export async function generateSceneVideo(
             generateAudio: generateAudio,
             durationSeconds: durationSeconds,
             // compressionQuality: VideoCompressionQuality.LOSSLESS,
-            resolution: "1080p",
+            resolution: resolution,
         },
     });
 

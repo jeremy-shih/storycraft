@@ -13,6 +13,7 @@ import {
     LLM_OPTIONS,
     IMAGE_MODEL_OPTIONS,
     VIDEO_MODEL_OPTIONS,
+    VIDEO_RESOLUTION_OPTIONS,
 } from "@/app/features/shared/hooks/use-settings";
 import {
     Dialog,
@@ -340,22 +341,12 @@ export const Sidebar = memo(function Sidebar() {
                                     Video Model
                                 </label>
                                 <Select
-                                    value={JSON.stringify(
-                                        VIDEO_MODEL_OPTIONS.find(
-                                            (opt) =>
-                                                opt.modelName ===
-                                                    settings.videoModel &&
-                                                opt.generateAudio ===
-                                                    settings.generateAudio,
-                                        ),
-                                    )}
-                                    onValueChange={(value) => {
-                                        const opt = JSON.parse(value);
+                                    value={settings.videoModel}
+                                    onValueChange={(value) =>
                                         updateSettings({
-                                            videoModel: opt.modelName,
-                                            generateAudio: opt.generateAudio,
-                                        });
-                                    }}
+                                            videoModel: value,
+                                        })
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select Video Model" />
@@ -363,14 +354,60 @@ export const Sidebar = memo(function Sidebar() {
                                     <SelectContent>
                                         {VIDEO_MODEL_OPTIONS.map((opt) => (
                                             <SelectItem
-                                                key={opt.label}
-                                                value={JSON.stringify(opt)}
+                                                key={opt.modelName}
+                                                value={opt.modelName}
                                             >
                                                 {opt.label}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
+                            </div>
+                            <div className="grid gap-2">
+                                <label className="text-sm font-medium">
+                                    Resolution
+                                </label>
+                                <Select
+                                    value={settings.videoResolution}
+                                    onValueChange={(value) =>
+                                        updateSettings({
+                                            videoResolution: value,
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Resolution" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {VIDEO_RESOLUTION_OPTIONS.map((opt) => (
+                                            <SelectItem
+                                                key={opt.value}
+                                                value={opt.value}
+                                            >
+                                                {opt.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <label
+                                    htmlFor="generate-audio"
+                                    className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    Generate Audio
+                                </label>
+                                <input
+                                    type="checkbox"
+                                    id="generate-audio"
+                                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    checked={settings.generateAudio}
+                                    onChange={(e) =>
+                                        updateSettings({
+                                            generateAudio: e.target.checked,
+                                        })
+                                    }
+                                />
                             </div>
                         </div>
                     </DialogContent>

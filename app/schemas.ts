@@ -220,6 +220,7 @@ export const videoApiPostSchema = z.object({
     aspectRatio: z.enum(["16:9", "9:16"]),
     model: z.string().optional(),
     generateAudio: z.boolean().optional(),
+    resolution: z.string().optional(),
     durationSeconds: z.number().optional(),
 });
 
