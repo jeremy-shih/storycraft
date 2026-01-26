@@ -34,7 +34,9 @@ export async function generateSceneVideo(
     resolution: string = "1080p",
 ): Promise<GenerateVideosResponse> {
     const modifiedPrompt = prompt + "\nSubtitles: off";
-    logger.debug(`generateSceneVideo {model: ${model}, prompt: ${modifiedPrompt}, resolution: ${resolution}}`);
+    logger.debug(
+        `generateSceneVideo {model: ${model}, prompt: ${modifiedPrompt}, resolution: ${resolution}}`,
+    );
 
     let operation = await ai.models.generateVideos({
         model: model,

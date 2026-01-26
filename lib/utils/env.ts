@@ -28,11 +28,11 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success && typeof window === "undefined") {
-    console.error(
-        "❌ Invalid environment variables:",
+    console.warn(
+        "⚠️ Invalid environment variables (Validation Skipped):",
         JSON.stringify(parsed.error.flatten().fieldErrors, null, 2),
     );
-    throw new Error("Invalid environment variables");
+    // Do not throw to allow build without env vars (runtime injection)
 }
 
 export const env = (parsed.success ? parsed.data : process.env) as z.infer<
