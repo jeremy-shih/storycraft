@@ -1,7 +1,7 @@
 export const LLM_OPTIONS = [
     {
-        label: "Gemini 3.0 Pro Preview",
-        modelName: "gemini-3-pro-preview",
+        label: "Gemini 3.1 Pro Preview",
+        modelName: "gemini-3.1-pro-preview",
         thinkingBudget: 0,
     },
     {
