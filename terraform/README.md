@@ -16,7 +16,7 @@ Execute the following steps directly in the **Google Cloud Console's Cloud Shell
 1.  **Launch Cloud Shell** from the Google Cloud Console.
 2.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/mblanc/storycraft.git
+    git clone https://github.com/jeremy-shih/storycraft.git
     cd storycraft/terraform
     ```
 

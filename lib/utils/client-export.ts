@@ -46,12 +46,45 @@ export async function exportVideoClient(
     const canvasSource = new CanvasSource(canvas, videoConfig);
     output.addVideoTrack(canvasSource);
 
+    // Helper function to find the best supported codec
+    async function getSupportedAudioCodec(): Promise<"aac" | "opus"> {
+        try {
+            // Test if the browser supports AAC encoding
+            const aacTest = await AudioEncoder.isConfigSupported({
+                codec: 'mp4a.40.2',
+                sampleRate: 48000,
+                numberOfChannels: 2,
+            });
+            
+            if (aacTest.supported) {
+                clientLogger.info("Browser supports AAC encoding.");
+                return "aac";
+            }
+        } catch (error) {
+            clientLogger.warn("Codec test failed, defaulting to Opus.");
+        }
+        
+        clientLogger.info("AAC not supported. Falling back to Opus.");
+        return "opus";
+    }
+
     // 3. Setup Audio Track
     // We will mix all audio logic using OfflineAudioContext, then add as a single track
+    const optimalCodec = await getSupportedAudioCodec();
     const audioConfig: AudioEncodingConfig = {
-        codec: "aac", // AAC LC
+        codec: optimalCodec, // Fall back to `opus` if `aac` not compaitble
         bitrate: 128_000,
     };
+    
+
+    // // 3. Setup Audio Track
+    // // We will mix all audio logic using OfflineAudioContext, then add as a single track
+    // const audioConfig: AudioEncodingConfig = {
+    //     codec: "aac", // AAC LC
+    //     bitrate: 128_000,
+    // };
+
+    
 
     // We need to mix audio before adding the tracksource, usually.
     // But AudioBufferSource takes an AudioBuffer.
