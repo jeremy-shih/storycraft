@@ -37,6 +37,10 @@ export const IMAGE_MODEL_OPTIONS = [
         modelName: "gemini-3-pro-image-preview",
     },
     {
+        label: "Nano Banana 2 Preview",
+        modelName: "gemini-3.1-flash-image-preview",
+    },
+    {
         label: "Nano Banana",
         modelName: "gemini-2.5-flash-image",
     },
@@ -44,12 +48,12 @@ export const IMAGE_MODEL_OPTIONS = [
 
 export const VIDEO_MODEL_OPTIONS = [
     {
-        label: "Veo 3.1 Preview Fast",
-        modelName: "veo-3.1-fast-generate-preview",
+        label: "Veo 3.1 Fast",
+        modelName: "veo-3.1-fast-generate-001",
     },
     {
         label: "Veo 3.1",
-        modelName: "veo-3.1-generate-preview",
+        modelName: "veo-3.1-generate-001",
     },
     {
         label: "Veo 3.0 Fast",
@@ -89,7 +93,7 @@ export const DEFAULT_SETTINGS: Settings = {
     llmModel: "gemini-3-flash-preview",
     thinkingBudget: 0,
     imageModel: "gemini-3-pro-image-preview",
-    videoModel: "veo-3.1-fast-generate-preview",
+    videoModel: "veo-3.1-fast-generate-001",
     videoResolution: "1080p",
     generateAudio: false,
 };

@@ -130,7 +130,7 @@ export async function exportVideoClient(
 
     // Process all audio items
     const audioPromises = layers.flatMap((layer) => {
-        if (layer.type === "voiceover" || layer.type === "music") {
+        if (layer.type === "voiceover" || layer.type === "music" || layer.type === "video") {
             return layer.items.map(async (item) => {
                 if (!item.content) return;
                 const buffer = await loadAudioBuffer(item.content);
